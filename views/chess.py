@@ -1,10 +1,14 @@
-class MainView:  
-    def main_menu(self):
-        print("")
-        print("--- Menu Principal ---")
-        print("1 : Gestion des joueurs")
-        print("2 : Gestion des tournois")
-        print("0 : Quitter")
+import os
+
+
+class MainView:
+    def __init__(self):
+        self.main_menu = (
+            "Menu Principal",
+            "Gestion des joueurs",
+            "Gestion des tournois",
+            "Quitter"
+        )
 
     def choice(self):
         print ("")
@@ -13,65 +17,83 @@ class MainView:
 
     def display_error_menu(self):
         print("Sélectionnez une option en entrant son numéro.")
+        print("")
 
+    def clear_menu(self):
+        if os.name == "nt":
+            os.system("cls")
+        else:
+            os.system("clear")
+
+    def create_menu(self, menu_line, menu_target):
+        # Display menu title
+        print(f"--- {menu_line[0]}{menu_target} ---")  
+        print("")
+        # Display menu options
+        line_number = 1
+        for option in menu_line[1:-1]:
+            print(f"{line_number} : {option}")
+            line_number += 1
+        print(f"0 : {menu_line[-1]}")
 
 class PlayersView:
-    def players_menu(self):
-        print("")
-        print("--+ Gestion des joueurs +--")
-        print("1 : Lister les joueurs")
-        print("2 : Ajouter un joueur")
-        print("3 : Modifier un joueur")
-        print("0 : Retour")
-
-    def player_modification_menu(self, player_firstname, player_lastname):
-        print("")
-        print(f"-++ Modification de {player_firstname} {player_lastname} ++-")
-        print("1 : Changer le nom de famille")
-        print("2 : Changer le prénom")
-        print("3 : Changer la date de naissance")
-        print("4 : Changer l'identifiant national")
-        print("5 : Changer de joueur")
-        print("6 : Supprimer le joueur")
-        print("0 : Retour")
+    def __init__(self):
+        self.players_menu = (
+            "Gestion des joueurs",
+            "Lister les joueurs",
+            "Ajouter un joueur",
+            "Modifier un joueur",
+            "Retour"
+        )
+        self.modification_menu = (
+            "Modification de ",
+            "Changer le nom de famille",
+            "Changer le prénom",
+            "Changer la date de naissance",
+            "Changer l'identifiant national",
+            "Changer de joueur",
+            "Supprimer le joueur",
+            "Retour"
+        )
 
 class TournamentsView:
-    def tournaments_menu(self):
-        print("")
-        print("--+ Gestion des tournois +--")
-        print("1 : Lister les tournois")
-        print("2 : Créer un tournoi")
-        print("3 : Gérer un tournoi")
-        print("0 : Retour")
+    def __init__(self):
+        self.tournaments_menu = (
+            "Gestion des tournois",
+            "Lister les tournois",
+            "Créer un tournoi",
+            "Gérer un tournoi",
+            "Retour"
+        )
 
-    def starting_tournament_menu(self, tournament_name):
-        print("")
-        print(f"-++ Gestion de {tournament_name} ++-")
-        print("1 : Voir les informations du tournoi")
-        print("2 : Changer le nom du tournoi")
-        print("3 : Changer le lieu du tournoi")
-        print("4 : Changer la description du tournoi")
-        print("5 : Lister les participants")
-        print("6 : Ajouter un participant")
-        print("7 : Retirer un participant")
-        print("8 : Démarrer le tournoi")
-        print("9 : Annuler le tournoi")
-        print("0 : Retour")
+        self.starting_tournament_menu = (
+            "Gestion de ",
+            "Voir les informations du tournoi",
+            "Changer le nom du tournoi",
+            "Changer le lieu du tournoi",
+            "Changer la description du tournoi",
+            "Lister les participants",
+            "Ajouter un participant",
+            "Retirer un participant",
+            "Démarrer le tournoi",
+            "Annuler le tournoi",
+            "Retour"
+        )
 
-    def ongoing_tournament_menu(self, tournament_name):
-        print("")
-        print(f"-++ Gestion de {tournament_name} ++-")
-        print("1 : Voir les informations du tournoi")
-        print("2 : Voir le classement")
-        print("3 : Voir le tour en cours")
-        print("4 : Jouer un match")
-        print("5 : Arrêter le tournoi")
-        print("0 : Retour")
-    
-    def finished_tournament_menu(self, tournament_name):
-        print("")
-        print(f"-++ Gestion de {tournament_name} ++-")
-        print("1 : Voir les informations du tournoi")
-        print("2 : Voir le classement")
-        print("3 : Effacer le tournoi")
-        print("0 : Retour")
+        self.ongoing_tournament_menu = (
+            "Gestion de ",
+            "Voir les informations du tournoi",
+            "Voir le classement",
+            "Voir le tour en cours",
+            "Jouer un match",
+            "Arrêter le tournoi",
+            "Retour"
+        )
+
+        self.finished_tournament_menu = (
+            "Gestion de ",
+            "Voir les informations du tournoi",
+            "Voir le classement",
+            "Effacer le tournoi",
+            "Retour"
+        )

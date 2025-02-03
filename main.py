@@ -1,5 +1,4 @@
-from controllers.chess import Menu
+from controllers.chess import MainController
 
-
-menu = Menu()
+menu = MainController()
 menu.execution()

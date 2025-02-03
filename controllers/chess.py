@@ -1,16 +1,17 @@
+from models.data_objects import Player
 from models.chess import PlayersModel
 from views.chess import MainView, TournamentsView, PlayersView
 
-class Menu:
+class MainController:
     def __init__(self):
         self.mainView = MainView()
         self.playerView = PlayersView()
         self.tournamentView = TournamentsView()
     
     def execution(self):
+        self.mainView.clear_menu()
         while True:
-            self.mainView.main_menu()
-            match self.mainView.choice():
+            match self.create_menu(self.mainView.main_menu):
                 case "1":
                     self.players_menu()
                 case "2":
@@ -20,10 +21,15 @@ class Menu:
                 case _:
                     self.mainView.display_error_menu()
 
+    def create_menu(self, menu, menu_target = ""):
+        self.mainView.create_menu(menu, menu_target)
+        option = self.mainView.choice()
+        self.mainView.clear_menu()
+        return option
+
     def players_menu(self):
         while True:
-            self.playerView.players_menu()
-            match self.mainView.choice():
+            match self.create_menu(self.playerView.players_menu):
                 case "1":
                     pass    #Lister joueurs
                 case "2":
@@ -38,8 +44,7 @@ class Menu:
     def player_modification_menu(self):
         #player = self.view.select_player()
         while True:
-            self.playerView.player_modification_menu("Vincent", "Dupont")
-            match self.mainView.choice():
+            match self.create_menu(self.playerView.modification_menu, menu_target = "Obelix"):
                 case "1":
                     pass    #Changer nom de famille
                 case "2":
@@ -59,8 +64,7 @@ class Menu:
 
     def tournaments_menu(self):
         while True:
-            self.tournamentView.tournaments_menu()
-            match self.mainView.choice():
+            match self.create_menu(self.tournamentView.tournaments_menu):
                 case "1":
                     pass    #Lister tournois
                 case "2":
@@ -87,8 +91,7 @@ class Menu:
                 
     def starting_tournament_menu(self):
         while True:
-            self.tournamentView.starting_tournament_menu("Championnat Régional")
-            match self.mainView.choice():
+            match self.create_menu(self.tournamentView.starting_tournament_menu, menu_target = "Championnat Régional"):
                 case "1":
                     pass    #Voir informations tournoi
                 case "2":
@@ -114,8 +117,7 @@ class Menu:
 
     def ongoing_tournament_menu(self):
         while True:
-            self.tournamentView.ongoing_tournament_menu("Championnat Régional")
-            match self.mainView.choice():
+            match self.create_menu(self.tournamentView.ongoing_tournament_menu, menu_target = "Championnat Régional"):
                 case "1":
                     pass    #Voir informations tournoi
                 case "2":
@@ -133,8 +135,7 @@ class Menu:
 
     def finished_tournament_menu(self):
         while True:
-            self.tournamentView.finished_tournament_menu("Championnat Régional")
-            match self.mainView.choice():
+            match self.create_menu(self.tournamentView.finished_tournament_menu, menu_target = "Championnat Régional"):
                 case "1":
                     pass    #Voir informations tournoi
                 case "2":
@@ -145,7 +146,6 @@ class Menu:
                     break
                 case _:
                     self.mainView.display_error_menu()
-     
 
 class PlayersController:
     pass

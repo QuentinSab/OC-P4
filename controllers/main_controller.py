@@ -1,13 +1,23 @@
-from models.data_objects import Player
-from models.chess import PlayersModel
-from views.chess import MainView, TournamentsView, PlayersView
+from controllers.player_controller import PlayerController
+
+from models.json_model import JsonModel
+
+from views.main_view import MainView
+from views.player_view import PlayerView
+from views.tournament_view import TournamentView
 
 class MainController:
     def __init__(self):
+        self.json_players = JsonModel("players.json")
+
+        self.player_controller = PlayerController(self.json_players)
+
         self.mainView = MainView()
-        self.playerView = PlayersView()
-        self.tournamentView = TournamentsView()
-    
+        self.playerView = PlayerView()
+        self.tournamentView = TournamentView()
+
+        self.player_controller.add_player("Daniel", "Antoine", "26/03/1990", "EF51365", 28)
+
     def execution(self):
         self.mainView.clear_menu()
         while True:
@@ -146,12 +156,3 @@ class MainController:
                     break
                 case _:
                     self.mainView.display_error_menu()
-
-class PlayersController:
-    pass
-
-class Rapport:
-    pass
-
-class Tournoi:
-    pass

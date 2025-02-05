@@ -3,20 +3,22 @@ from controllers.player_controller import PlayerController
 from models.json_model import JsonModel
 
 from views.main_view import MainView
-from views.player_view import PlayerView
 from views.tournament_view import TournamentView
 
 class MainController:
     def __init__(self):
         self.json_players = JsonModel("players.json")
 
-        self.player_controller = PlayerController(self.json_players)
+        self.playerController = PlayerController(self.json_players)
 
         self.mainView = MainView()
-        self.playerView = PlayerView()
         self.tournamentView = TournamentView()
 
-        self.player_controller.add_player("Daniel", "Antoine", "26/03/1990", "EF51365", 28)
+    def create_menu(self, menu, menu_target = ""):
+        self.mainView.create_menu(menu, menu_target)
+        option = self.mainView.choice()
+        self.mainView.clear_menu()
+        return option
 
     def execution(self):
         self.mainView.clear_menu()
@@ -31,19 +33,14 @@ class MainController:
                 case _:
                     self.mainView.display_error_menu()
 
-    def create_menu(self, menu, menu_target = ""):
-        self.mainView.create_menu(menu, menu_target)
-        option = self.mainView.choice()
-        self.mainView.clear_menu()
-        return option
-
     def players_menu(self):
         while True:
-            match self.create_menu(self.playerView.players_menu):
+            match self.create_menu(self.playerController.playerView.players_menu):
                 case "1":
-                    pass    #Lister joueurs
+                    self.playerController.display_players()
                 case "2":
-                    pass    #Ajouter joueur
+                    self.playerController.add_player()
+                    self.mainView.clear_menu()
                 case "3":
                     self.player_modification_menu()
                 case "0":
@@ -52,9 +49,8 @@ class MainController:
                     self.mainView.display_error_menu()
 
     def player_modification_menu(self):
-        #player = self.view.select_player()
         while True:
-            match self.create_menu(self.playerView.modification_menu, menu_target = "Obelix"):
+            match self.create_menu(self.playerController.playerView.modification_menu, menu_target = "Antoine"):
                 case "1":
                     pass    #Changer nom de famille
                 case "2":

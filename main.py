@@ -1,4 +1,6 @@
 from controllers.main_controller import MainController
 
-menu = MainController()
-menu.execution()
+
+if __name__ == "__main__":
+    menu = MainController()
+    menu.execution()

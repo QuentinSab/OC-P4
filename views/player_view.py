@@ -21,11 +21,12 @@ class PlayerView:
     def display_players(self, players_list):
         if not players_list:
             print("Aucun joueur enregistré.")
+            print("")
             return
 
         for player in players_list:
             print(
-                f"ID : {player.local_id} | "
+                f"ID : {player.id} | "
                 f"Nom : {player.last_name} | "
                 f"Prénom : {player.first_name} | "
                 f"Date de naissance : {player.birth_date} | "
@@ -34,7 +35,6 @@ class PlayerView:
         print("")
 
     def get_player_data(self):
-        print("")
         last_name = input("Entrez le nom de famille: ")
         first_name = input("Entrez le prénom: ")
         birth_date = input("Entrez la date de naissance (JJ/MM/AAAA): ")
@@ -42,10 +42,9 @@ class PlayerView:
         return last_name, first_name, birth_date, national_id
     
     def select_player(self):
-        print ("")
-        local_id = input("Choisissez un joueur en entrant son identifiant: ")
+        id = input("Choisissez un joueur en entrant son identifiant: ")
         print("")
-        return int(local_id)
+        return int(id)
     
     def no_player_find(self):
         print("Aucun joueur correspondant n'a été trouvé.")

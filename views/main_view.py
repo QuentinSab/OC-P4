@@ -1,4 +1,5 @@
 import os
+from views.utils import Utils
 
 class MainView:
     def __init__(self):
@@ -18,13 +19,8 @@ class MainView:
         print("Sélectionnez une option en entrant son numéro.")
         print("")
 
-    def clear_menu(self):
-        if os.name == "nt":
-            os.system("cls")
-        else:
-            os.system("clear")
-
     def create_menu(self, menu_line, menu_target):
+        Utils.clear_menu()
         # Display menu title
         print(f"--- {menu_line[0]}{menu_target} ---")  
         print("")
@@ -34,3 +30,6 @@ class MainView:
             print(f"{line_number} : {option}")
             line_number += 1
         print(f"0 : {menu_line[-1]}")
+        
+    def temporisation(self):
+        Utils.temporisation()

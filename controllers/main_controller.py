@@ -7,10 +7,9 @@ from views.main_view import MainView
 
 class MainController:
     def __init__(self):
-        self.json_players = JsonModel("players.json")
         self.json_tournaments = JsonModel("tournaments.json")
 
-        self.playerController = PlayerController(self.json_players)
+        self.playerController = PlayerController()
         self.tournamentController = TournamentController(self.json_tournaments)
 
         self.mainView = MainView()
@@ -18,11 +17,9 @@ class MainController:
     def display_menu(self, menu, menu_target = ""):
         self.mainView.create_menu(menu, menu_target)
         option = self.mainView.choice()
-        self.mainView.clear_menu()
         return option
 
     def execution(self):
-        self.mainView.clear_menu()
         while True:
             match self.display_menu(self.mainView.main_menu):
                 case "1":
@@ -39,9 +36,9 @@ class MainController:
             match self.display_menu(self.playerController.playerView.players_menu):
                 case "1":
                     self.playerController.display_players()
+                    self.mainView.temporisation()
                 case "2":
                     self.playerController.add_player()
-                    self.mainView.clear_menu()
                 case "3":
                     self.player_modification_menu()
                 case "0":
@@ -91,8 +88,8 @@ class MainController:
 
     def manager_tournament_menus(self):
         """Determine which menu to use according to the selected tournament status."""
-        #tournament = self.view.select_tournament()
-        match "finished": #tournament.status
+        tournament = self.tournamentController.select_tournament()
+        match tournament.status:
             case "starting":
                 self.starting_tournament_menu()
             case "ongoing":

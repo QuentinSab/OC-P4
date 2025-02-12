@@ -16,3 +16,13 @@ class TournamentController:
         id = self.json_tournaments.generate_id(tournaments_list)
         new_tournament = TournamentModel(name, "status", place, description, "start_date", "end_date", id, int(round_number))
         self.json_tournaments.append_json(new_tournament)
+        
+    def select_tournament(self):
+        self.display_tournaments()
+        id = self.tournamentView.select_tournament()
+        tournaments_list = self.json_tournaments.read_json(TournamentModel)
+        tournament = self.json_tournaments.get_object_by_id(id, tournaments_list)
+        if tournament == None:
+            self.tournamentView.no_tournament_find()
+        else:
+            return tournament

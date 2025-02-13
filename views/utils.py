@@ -3,7 +3,7 @@ import os
 class Utils:
     
     @staticmethod
-    def clear_menu():
+    def clear():
         if os.name == "nt":
             os.system("cls")
         else:
@@ -11,4 +11,5 @@ class Utils:
     
     @staticmethod
     def temporisation():
-        input("Entrer pour revenir au menu...")
+        print("")
+        input("Entrée pour revenir au menu...")

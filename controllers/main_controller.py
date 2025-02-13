@@ -36,7 +36,6 @@ class MainController:
             match self.display_menu(self.playerController.playerView.players_menu):
                 case "1":
                     self.playerController.display_players()
-                    self.mainView.temporisation()
                 case "2":
                     self.playerController.add_player()
                 case "3":
@@ -65,7 +64,7 @@ class MainController:
                     if player == None:
                         break
                 case "6":
-                    self.playerController.delete_player(player)
+                    player.delete()
                     break
                 case "0":
                     break

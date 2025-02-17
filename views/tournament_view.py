@@ -1,3 +1,5 @@
+from views.utils import Utils
+
 class TournamentView:
     def __init__(self):
         self.tournaments_menu = (
@@ -41,11 +43,10 @@ class TournamentView:
         )
 
     def display_tournaments(self, tournaments_list):
-            if not tournaments_list:
-                print("Aucun tournoi enregistré.")
-                print("")
-                return
-
+        Utils.clear()
+        if not tournaments_list:
+            print("Aucun tournoi enregistré.")
+        else:
             for tournament in tournaments_list:
                 print(
                     f"ID : {tournament.id} | "
@@ -53,11 +54,94 @@ class TournamentView:
                     f"Statut : {tournament.status} | "
                     f"Lieu : {tournament.place} | "
                 )
-            print("")
+        Utils.temporisation()
 
     def get_tournament_data(self):
+        Utils.clear()
         name = input("Entrez le nom du tournoi: ")
         place = input("Entrez le lieu: ")
         description = input("Entrez la description: ")
         round_number = input("Entrez le nombre de tours: ")
         return name, place, description, round_number
+    
+    def display_tournament_data(self, tournament):
+        Utils.clear()
+        print("Détails du Tournoi")
+        print("")
+        print(f"ID: {tournament.id}")
+        print(f"Nom: {tournament.name}")
+        print(f"Statut: {tournament.status}")
+        print(f"Lieu: {tournament.place}")
+        print(f"Description: {tournament.description}")
+        print(f"Date de début: {tournament.start_date}")
+        print(f"Date de fin: {tournament.end_date}")
+        print(f"Nombre de rounds: {tournament.round_number}")
+        print(f"Round actuel: {tournament.current_round}")
+        print("")
+        print("Rounds")
+        if tournament.rounds:
+            for i, round_data in enumerate(tournament.rounds, 1):
+                print(f"Round {i}: {round_data}")
+        else:
+            print("Aucun round enregistré.")
+        print("")
+        print("Participants")
+        if tournament.players:
+            for i, player in enumerate(tournament.players, 1):
+                print(f"Joueur {i}: {player}")
+        else:
+            print("Aucun participant enregistré.")
+        Utils.temporisation()
+    
+    def modify_tournament(self):
+        print("")
+        new_value = input("Entrez la nouvelle valeur: ")
+        print("")
+        return new_value
+
+    def select_tournament_by_index(self, tournaments_list, max_index):
+        Utils.clear()
+        if not tournaments_list:
+            print("Aucun tounoi enregistré.")
+            Utils.temporisation()
+        else:   
+            print("Liste des tournois :")
+            print("")
+            for index, tournament in enumerate(tournaments_list, start=1):
+                print(f"{index} : {tournament.name} ")
+            print("")
+
+            while True:
+                choice = int(input(f"Sélectionnez un tournoi (1 à {max_index}) : "))
+                if 1 <= choice <= max_index:
+                    return choice
+
+    def display_participant(self, participants):
+        Utils.clear()
+        if participants:
+            print("Participants du Tournoi")
+            print("")
+            for index, player in enumerate(participants, start = 1):
+                print(f"{index} : {player.last_name} {player.first_name}")
+        else:
+            print("Aucun participant inscrit.")
+        Utils.temporisation()
+
+    def remove_participant(self, tournament, participants):
+        Utils.clear()
+        if participants:
+            print("Participants du Tournoi")
+            print("")
+            for index, player in enumerate(participants, start = 1):
+                print(f"{index} : {player.last_name} {player.first_name}")
+        else:
+            print("Aucun participant inscrit.")
+            Utils.temporisation()
+            return None
+        print("")
+        while True:
+            chosen_player = int(input("Entrez le numéro du participant à supprimer : ")) - 1
+            if 0 <= chosen_player < len(tournament.players):
+                player_id_to_remove = participants[chosen_player].id 
+                tournament.players.remove(player_id_to_remove)
+                break

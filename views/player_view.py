@@ -24,14 +24,15 @@ class PlayerView:
         Utils.clear()
         if not players_list:
             print("Aucun joueur enregistré.")
-        for player in players_list:
-            print(
-                f"ID : {player.id} | "
-                f"Nom : {player.last_name} | "
-                f"Prénom : {player.first_name} | "
-                f"Date de naissance : {player.birth_date} | "
-                f"ID National : {player.national_id}"
-            )
+        else:
+            for player in players_list:
+                print(
+                    f"ID : {player.id} | "
+                    f"Nom : {player.last_name} | "
+                    f"Prénom : {player.first_name} | "
+                    f"Date de naissance : {player.birth_date} | "
+                    f"ID National : {player.national_id}"
+                )
         Utils.temporisation()
 
     def get_player_data(self):

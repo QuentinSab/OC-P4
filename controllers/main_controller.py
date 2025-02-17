@@ -1,17 +1,12 @@
 from controllers.player_controller import PlayerController
 from controllers.tournament_controller import TournamentController
 
-from models.json_model import JsonModel
-
 from views.main_view import MainView
 
 class MainController:
     def __init__(self):
-        self.json_tournaments = JsonModel("tournaments.json")
-
         self.playerController = PlayerController()
-        self.tournamentController = TournamentController(self.json_tournaments)
-
+        self.tournamentController = TournamentController()
         self.mainView = MainView()
 
     def display_menu(self, menu, menu_target = ""):
@@ -61,8 +56,6 @@ class MainController:
                     self.playerController.modify_player(player, "national_id")
                 case "5":
                     player = self.playerController.select_player()
-                    if player == None:
-                        break
                 case "6":
                     player.delete()
                     break
@@ -90,43 +83,47 @@ class MainController:
         tournament = self.tournamentController.select_tournament()
         match tournament.status:
             case "starting":
-                self.starting_tournament_menu()
+                self.starting_tournament_menu(tournament)
             case "ongoing":
-                self.ongoing_tournament_menu()
+                self.ongoing_tournament_menu(tournament)
             case "finished":
-                self.finished_tournament_menu()
+                self.finished_tournament_menu(tournament)
             case _:
                 pass
  
-    def starting_tournament_menu(self):
+    def starting_tournament_menu(self, tournament):
         while True:
-            match self.display_menu(self.tournamentController.tournamentView.starting_tournament_menu, menu_target = "Championnat Régional"):
+            match self.display_menu(self.tournamentController.tournamentView.starting_tournament_menu, menu_target = tournament.name):
                 case "1":
-                    pass    #Voir informations tournoi
+                    self.tournamentController.display_tournament_data(tournament)
                 case "2":
-                    pass    #Changer nom tounoi
+                    self.tournamentController.modify_tournament(tournament, "name")
                 case "3":
-                    pass    #Changer lieu tournoi
+                    self.tournamentController.modify_tournament(tournament, "place")
                 case "4":
-                    pass    #Changer description tournoi
+                    self.tournamentController.modify_tournament(tournament, "description")
                 case "5":
-                    pass    #Lister participants
+                    players_list = self.playerController.load_all_players()
+                    self.tournamentController.display_participant(tournament, players_list)
                 case "6":
-                    pass    #Ajouter participant
+                    player = self.playerController.select_player()
+                    self.tournamentController.add_participant(tournament, player.id)
                 case "7":
-                    pass    #Retirer participant
+                    players_list = self.playerController.load_all_players()
+                    self.tournamentController.remove_participant(tournament, players_list)
                 case "8":
                     pass    #Démarrer tournoi
                 case "9":
-                    pass    #Annuler tournoi
+                    tournament.delete()
+                    break
                 case "0":
                     break
                 case _:
                     self.mainView.display_error_menu()
 
-    def ongoing_tournament_menu(self):
+    def ongoing_tournament_menu(self, tournament):
         while True:
-            match self.display_menu(self.tournamentController.tournamentView.ongoing_tournament_menu, menu_target = "Championnat Régional"):
+            match self.display_menu(self.tournamentController.tournamentView.ongoing_tournament_menu, menu_target = tournament.name):
                 case "1":
                     pass    #Voir informations tournoi
                 case "2":
@@ -142,9 +139,9 @@ class MainController:
                 case _:
                     self.mainView.display_error_menu()
 
-    def finished_tournament_menu(self):
+    def finished_tournament_menu(self, tournament):
         while True:
-            match self.display_menu(self.tournamentController.tournamentView.finished_tournament_menu, menu_target = "Championnat Régional"):
+            match self.display_menu(self.tournamentController.tournamentView.finished_tournament_menu, menu_target = tournament.name):
                 case "1":
                     pass    #Voir informations tournoi
                 case "2":

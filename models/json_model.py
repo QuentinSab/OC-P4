@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from dataclasses import dataclass, asdict
+from dataclasses import asdict
 
 class JsonModel:
     def __init__(self, file_name = "file.json"):

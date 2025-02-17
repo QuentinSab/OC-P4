@@ -14,7 +14,10 @@ class MainView:
         return option
 
     def display_error_menu(self):
+        print("")
+        print("Entrée invalide.")
         print("Sélectionnez une option en entrant son numéro.")
+        Utils.temporisation()
 
     def create_menu(self, menu_line, menu_target):
         Utils.clear()

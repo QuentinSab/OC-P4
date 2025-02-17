@@ -1,5 +1,5 @@
 from models.json_model import JsonModel
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 import uuid
 
 PLAYERS_JSON = "players.json"
@@ -30,6 +30,14 @@ class PlayerModel:
         for player in players_list:
             if player.id == self.id:
                 players_list.remove(player)
+        self.json_players.write_json(players_list)
+
+    def update(self):
+        players_list = self.load_all_players()
+        for player in players_list:
+            if player.id == self.id:
+                players_list.remove(player)
+                players_list.append(self)
         self.json_players.write_json(players_list)
 
     @staticmethod

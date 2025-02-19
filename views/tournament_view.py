@@ -145,3 +145,20 @@ class TournamentView:
                 player_id_to_remove = participants[chosen_player].id 
                 tournament.players.remove(player_id_to_remove)
                 break
+
+    def launch_tournament(self):
+        Utils.clear()
+        print("Le tournoi commence.")
+        Utils.temporisation()
+
+    def parity_error(self):
+        Utils.clear()
+        print("Le tournoi ne peut pas commencer.")
+        print("Le nombre de participants n'est pas pair.")
+        Utils.temporisation()
+
+    def no_participant_error(self):
+        Utils.clear()
+        print("Le tournoi ne peut pas commencer.")
+        print("Aucun joueur ne participe au tournoi.")
+        Utils.temporisation()

@@ -14,7 +14,7 @@ class TournamentModel:
     end_date: str
     id: str
     round_number: int
-    current_round: str
+    current_round: int
     rounds: list
     players: list
 
@@ -28,7 +28,7 @@ class TournamentModel:
         end_date="end_date",
         id=None,
         round_number=4,
-        current_round="current_round",
+        current_round=0,
         rounds=[],
         players=[]
     ):
@@ -71,7 +71,11 @@ class TournamentModel:
             if player.id in self.players:
                 participants.append(player)
         return participants
-        
+
+    def launch(self):
+        self.status = "ongoing"
+        self.update()
+
     @staticmethod
     def load_all_tournaments():
         json_tournaments = JsonModel(TOURNAMENTS_JSON)

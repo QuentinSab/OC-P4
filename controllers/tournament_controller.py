@@ -1,4 +1,5 @@
 from models.tournament_model import TournamentModel
+from models.round_model import RoundModel
 from views.tournament_view import TournamentView
 
 class TournamentController:
@@ -22,7 +23,7 @@ class TournamentController:
             start_date="start_date",
             end_date="end_date",
             round_number=round_number,
-            current_round="Tour 0",
+            current_round=0,
             rounds=[],
             players=[]
         )
@@ -50,3 +51,14 @@ class TournamentController:
     def modify_tournament(self, tournament, attribute):  
         setattr(tournament, attribute, self.tournamentView.modify_tournament())
         tournament.update()
+    
+    def launch_tournament(self, tournament):
+        nombre_participants = len(tournament.players)
+        if nombre_participants == 0:
+            self.tournamentView.no_participant_error()
+        elif nombre_participants %2:
+            self.tournamentView.parity_error()
+        else:
+            tournament.launch()
+            self.tournamentView.launch_tournament()
+            return True

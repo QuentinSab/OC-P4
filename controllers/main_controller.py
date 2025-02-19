@@ -112,7 +112,8 @@ class MainController:
                     players_list = self.playerController.load_all_players()
                     self.tournamentController.remove_participant(tournament, players_list)
                 case "8":
-                    pass    #Démarrer tournoi
+                    if self.tournamentController.launch_tournament(tournament):
+                        break
                 case "9":
                     tournament.delete()
                     break
@@ -125,7 +126,7 @@ class MainController:
         while True:
             match self.display_menu(self.tournamentController.tournamentView.ongoing_tournament_menu, menu_target = tournament.name):
                 case "1":
-                    pass    #Voir informations tournoi
+                    self.tournamentController.display_tournament_data(tournament)
                 case "2":
                     pass    #Voir classement
                 case "3":
@@ -133,7 +134,8 @@ class MainController:
                 case "4":
                     pass    #Jouer match
                 case "5":
-                    pass    #Arrete tournoi
+                    tournament.delete()
+                    break
                 case "0":
                     break
                 case _:
@@ -143,11 +145,12 @@ class MainController:
         while True:
             match self.display_menu(self.tournamentController.tournamentView.finished_tournament_menu, menu_target = tournament.name):
                 case "1":
-                    pass    #Voir informations tournoi
+                    self.tournamentController.display_tournament_data(tournament)
                 case "2":
                     pass    #Voir classement
                 case "3":
-                    pass    #Effacer tournoi
+                    tournament.delete()
+                    break
                 case "0":
                     break
                 case _:

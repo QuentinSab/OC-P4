@@ -108,7 +108,7 @@ class TournamentView:
             print("Liste des tournois :")
             print("")
             for index, tournament in enumerate(tournaments_list, start=1):
-                print(f"{index} : {tournament.name} ")
+                print(f"{index} : {tournament.name} - {tournament.status}")
             print("")
 
             while True:

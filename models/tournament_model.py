@@ -1,4 +1,6 @@
 from models.json_model import JsonModel
+
+from datetime import datetime
 from dataclasses import dataclass, asdict
 import uuid
 
@@ -74,6 +76,7 @@ class TournamentModel:
 
     def launch(self):
         self.status = "ongoing"
+        self.start_date = datetime.now().isoformat()
         self.update()
 
     @staticmethod

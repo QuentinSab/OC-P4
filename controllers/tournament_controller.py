@@ -59,6 +59,16 @@ class TournamentController:
         elif nombre_participants %2:
             self.tournamentView.parity_error()
         else:
+            
+            ###
+            match1 = (["joueur1", 1], ["joueur2", 0])
+            match2 = (["joeur3", 0], ["joueur4", 2])
+            round1 = RoundModel("round2", "start_date", "end_date", 3, [])
+            round1.matchs_list.append(match1)
+            round1.matchs_list.append(match2)
+            tournament.rounds.append(round1)
+            
+            ###
             tournament.launch()
             self.tournamentView.launch_tournament()
             return True

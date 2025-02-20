@@ -43,4 +43,6 @@ class PlayerModel:
     @staticmethod
     def load_all_players():
         json_players = JsonModel(PLAYERS_JSON)
-        return json_players.read_json(PlayerModel)
+        players_list = json_players.read_json(PlayerModel)
+        players_list = sorted(players_list, key=lambda player: (player.last_name.lower(), player.first_name.lower()))
+        return players_list

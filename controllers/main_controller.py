@@ -81,15 +81,16 @@ class MainController:
     def manager_tournament_menus(self):
         """Determine which menu to use according to the selected tournament status."""
         tournament = self.tournamentController.select_tournament()
-        match tournament.status:
-            case "starting":
-                self.starting_tournament_menu(tournament)
-            case "ongoing":
-                self.ongoing_tournament_menu(tournament)
-            case "finished":
-                self.finished_tournament_menu(tournament)
-            case _:
-                pass
+        if tournament:
+            match tournament.status:
+                case "starting":
+                    self.starting_tournament_menu(tournament)
+                case "ongoing":
+                    self.ongoing_tournament_menu(tournament)
+                case "finished":
+                    self.finished_tournament_menu(tournament)
+                case _:
+                    pass
  
     def starting_tournament_menu(self, tournament):
         while True:
@@ -128,11 +129,13 @@ class MainController:
                 case "1":
                     self.tournamentController.display_tournament_data(tournament)
                 case "2":
-                    pass    #Voir classement
+                    players_list = self.playerController.load_all_players()
+                    self.tournamentController.display_ladder(tournament, players_list)
                 case "3":
-                    pass    #Voir tour
+                    self.tournamentController.display_round(tournament.get_rounds()[tournament.current_round])
                 case "4":
-                    pass    #Jouer match
+                    if self.tournamentController.play_match(tournament) == True:
+                        break
                 case "5":
                     tournament.delete()
                     break
@@ -147,7 +150,8 @@ class MainController:
                 case "1":
                     self.tournamentController.display_tournament_data(tournament)
                 case "2":
-                    pass    #Voir classement
+                    players_list = self.playerController.load_all_players()
+                    self.tournamentController.display_ladder(tournament, players_list)
                 case "3":
                     tournament.delete()
                     break

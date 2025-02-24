@@ -27,10 +27,10 @@ class PlayerView:
         else:
             for player in players_list:
                 print(
-                    f"ID : {player.id} | "
-                    f"Nom : {player.last_name} | "
-                    f"Prénom : {player.first_name} | "
-                    f"Date de naissance : {player.birth_date} | "
+                    f"ID : {player.id:<40} | "
+                    f"Nom : {player.last_name:<15} | "
+                    f"Prénom : {player.first_name:<15} | "
+                    f"Date de naissance : {player.birth_date:<12} | "
                     f"ID National : {player.national_id}"
                 )
         Utils.temporisation()
@@ -58,7 +58,7 @@ class PlayerView:
             print("Liste des joueurs :")
             print("")
             for index, player in enumerate(players_list, start=1):
-                print(f"{index} : {player.last_name} {player.first_name}")
+                print(f"{index:<4}: {player.last_name:<15} {player.first_name}")
             print("")
 
             while True:

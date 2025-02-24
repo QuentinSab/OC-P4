@@ -52,7 +52,7 @@ class TournamentView:
                     f"ID : {tournament.id} | "
                     f"Nom : {tournament.name} | "
                     f"Statut : {tournament.status} | "
-                    f"Lieu : {tournament.place} | "
+                    f"Lieu : {tournament.place}"
                 )
         Utils.temporisation()
 
@@ -146,6 +146,25 @@ class TournamentView:
                 tournament.players.remove(player_id_to_remove)
                 break
 
+    def display_round(self, round):
+        Utils.clear()
+        print(round.name)
+        print("")
+        for i, match in enumerate(round.matchs_list, start=1):
+            player1, score1 = match[0]
+            player2, score2 = match[1]
+            print(f"  Match {i}: {player1} ({score1}) - {player2} ({score2})")
+        Utils.temporisation()
+
+    def display_ladder(self, ladder):
+        Utils.clear()
+        
+        print(f"{'Rang':<8} {'Joueur':<30} {'Score'}")
+        print("")
+        for rank, (player, score) in enumerate(ladder, 1):
+            print(f"{rank:<8} {player:<30} {score}")
+        Utils.temporisation()
+
     def launch_tournament(self):
         Utils.clear()
         print("Le tournoi commence.")
@@ -161,4 +180,9 @@ class TournamentView:
         Utils.clear()
         print("Le tournoi ne peut pas commencer.")
         print("Aucun joueur ne participe au tournoi.")
+        Utils.temporisation()
+    
+    def tournament_end(self, tournament):
+        Utils.clear()
+        print(f"Le tournoi \"{tournament.name}\" est terminé.")
         Utils.temporisation()

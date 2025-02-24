@@ -1,6 +1,7 @@
 from models.tournament_model import TournamentModel
-from models.round_model import RoundModel
 from views.tournament_view import TournamentView
+
+from views.utils import Utils###
 
 class TournamentController:
     def __init__(self):
@@ -59,16 +60,21 @@ class TournamentController:
         elif nombre_participants %2:
             self.tournamentView.parity_error()
         else:
-            
-            ###
-            match1 = (["joueur1", 1], ["joueur2", 0])
-            match2 = (["joeur3", 0], ["joueur4", 2])
-            round1 = RoundModel("round2", "start_date", "end_date", 3, [])
-            round1.matchs_list.append(match1)
-            round1.matchs_list.append(match2)
-            tournament.rounds.append(round1)
-            
-            ###
             tournament.launch()
             self.tournamentView.launch_tournament()
+            tournament.start_round()
             return True
+    
+    def display_ladder(self, tournament, players_list):
+        participants = tournament.get_participants(players_list)
+        ladder = tournament.name_ladder_ids(tournament.get_ladder(), participants)
+        self.tournamentView.display_ladder(ladder)
+
+    def play_match(self, tournament):
+        tournament.play_match()
+        if tournament.progress() == True:
+            self.tournamentView.tournament_end(tournament)
+            return True
+
+    def display_round(self, round):
+        self.tournamentView.display_round(round)

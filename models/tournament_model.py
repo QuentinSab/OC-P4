@@ -1,8 +1,12 @@
 from models.json_model import JsonModel
+from models.round_model import RoundModel
 
 from datetime import datetime
 from dataclasses import dataclass, asdict
 import uuid
+import random
+
+from views.utils import Utils
 
 TOURNAMENTS_JSON = "tournaments.json"
 
@@ -77,6 +81,85 @@ class TournamentModel:
     def launch(self):
         self.status = "ongoing"
         self.start_date = datetime.now().isoformat()
+        self.update()
+
+    def get_rounds(self):
+        rounds_list = []
+        for round in self.rounds:
+            if isinstance(round, dict):
+                rounds_list.append(RoundModel(**round))
+            else:
+                rounds_list.append(round)
+        return rounds_list
+
+    def get_ladder(self):
+        rounds_list = self.get_rounds()
+        player_scores = {}
+        for round in rounds_list:
+            for match in round.matchs_list:
+                for player in match:
+                    player_id, player_score = player
+                    if player_id in player_scores:
+                        player_scores[player_id] += player_score
+                    else:
+                        player_scores[player_id] = player_score
+        ladder = [(player_id, score) for player_id, score in player_scores.items()]
+        ladder = sorted(ladder, key=lambda x: x[1], reverse=True)
+        return ladder
+
+    def name_ladder_ids(self, ladder, participants):
+        named_ladder = []
+        for player_id, score in ladder:
+            for participant in participants:
+                if participant.id == player_id:
+                    name = participant.last_name + " " + participant.first_name
+                    named_ladder.append((name, score))
+        return named_ladder
+
+    def start_round(self):
+        round = RoundModel("Round " + str(self.current_round+1), datetime.now().isoformat(), "end_date", 0, [])
+        pairs_list = []
+        if True:#self.current_round == 0:
+            players_list = self.players
+            random.shuffle(players_list)
+            for pair in range(0, len(players_list), 2):
+                pairs_list.append((players_list[pair], players_list[pair + 1]))
+        else:
+            rounds = self.get_rounds()
+            ladder = self.get_ladder()  
+            
+            
+        
+        for pair in pairs_list:
+            player1, player2 = pair
+            match = ([player1, 0], [player2, 0])
+            round.matchs_list.append(match)
+        self.rounds.append(round)
+        self.update()
+
+    def play_match(self):
+        round = self.get_rounds()[self.current_round]
+        score = random.choices([(0.0, 1.0), (1.0, 0.0), (0.5, 0.5)], weights=[0.4, 0.4, 0.2])
+        score1, score2 = score[0]
+        match = round.matchs_list[round.current_match]
+        updated_match = ([match[0][0], score1], [match[1][0], score2])
+        round.matchs_list[round.current_match] = updated_match
+        self.update()
+
+    def progress(self):
+        round = self.get_rounds()[self.current_round]
+        round.current_match += 1
+        self.rounds[self.current_round] = round
+        if round.current_match == len(self.players)/2:
+            round.end_date = datetime.now().isoformat()
+            if self.current_round == int(self.round_number)-1:
+                self.status = "finished"
+                self.end_date = datetime.now().isoformat()
+                self.update()
+                return True
+            else:
+                self.current_round += 1
+                self.start_round()           
         self.update()
 
     @staticmethod

@@ -119,29 +119,58 @@ class TournamentModel:
     def start_round(self):
         round = RoundModel("Round " + str(self.current_round+1), datetime.now().isoformat(), "end_date", 0, [])
         pairs_list = []
-        if True:#self.current_round == 0:
+        
+        # Si premier round 
+        if self.current_round == 0:
             players_list = self.players
+            
+            # Mélange aléatoirement les joueurs
             random.shuffle(players_list)
+            
+            # Ajoute par pair tous les joueurs à la liste
             for pair in range(0, len(players_list), 2):
                 pairs_list.append((players_list[pair], players_list[pair + 1]))
+                
         else:
-            rounds = self.get_rounds()
-            ladder = self.get_ladder()  
+            ladder = self.get_ladder()
             
-            
-        
+            # Liste les adversaires disponibles
+            available_players = [player[0] for player in ladder]
+
+            while available_players:
+                # Prend le premier joueur du ladder
+                player1 = available_players.pop(0)
+                
+                # Récupère les adversaires déjà affrontés
+                opponents_faced = self.get_opponents(player1)  
+                
+                # Trouve un adversaire qui n'a pas encore été affronté
+                player2 = None
+                for opponent in available_players:
+                    if opponent not in opponents_faced:
+                        player2 = opponent
+                        break
+
+                # Si tous les adversaires ont déjà été affrontés, prend le premier disponible
+                if player2 is None:
+                    player2 = available_players[0]
+
+                available_players.remove(player2)
+                pairs_list.append((player1, player2))
+
+        # Crée un match pour chaque paire de joueur
         for pair in pairs_list:
-            player1, player2 = pair
-            match = ([player1, 0], [player2, 0])
+            match = ([pair[0], 0], [pair[1], 0])
             round.matchs_list.append(match)
+            
         self.rounds.append(round)
         self.update()
 
     def play_match(self):
         round = self.get_rounds()[self.current_round]
-        score = random.choices([(0.0, 1.0), (1.0, 0.0), (0.5, 0.5)], weights=[0.4, 0.4, 0.2])
-        score1, score2 = score[0]
         match = round.matchs_list[round.current_match]
+        score = random.choices([(0.0, 1.0), (1.0, 0.0), (0.5, 0.5)], weights=[0.4, 0.4, 0.2])
+        score1, score2 = score[0]   
         updated_match = ([match[0][0], score1], [match[1][0], score2])
         round.matchs_list[round.current_match] = updated_match
         self.update()
@@ -161,6 +190,26 @@ class TournamentModel:
                 self.current_round += 1
                 self.start_round()           
         self.update()
+
+    def get_opponents(self, player):
+        rounds = self.get_rounds()
+        opponents = []
+        players_count = len(self.players)
+
+        for round in rounds:
+            for match in round.matchs_list:
+                # Si le joueur est trouvé dans le match, on ajoute l'adversaire
+                if match[0][0] == player:
+                    opponents.append(match[1][0])
+                elif match[1][0] == player:
+                    opponents.append(match[0][0])
+
+                # Si tous les joueurs ont été affronté par player
+                if len(set(opponents)) == players_count - 1:
+                    opponents.clear()
+                    return opponents
+
+        return opponents
 
     @staticmethod
     def load_all_tournaments():

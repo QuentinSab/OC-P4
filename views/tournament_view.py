@@ -78,9 +78,8 @@ class TournamentView:
         print(f"Nombre de rounds: {tournament.round_number}")
         print(f"Round actuel: {tournament.current_round + 1}")
         print("")
-        rounds = tournament.get_rounds()
-        if rounds:
-            for round in rounds:
+        if tournament.rounds:
+            for round in tournament.rounds:
                 self.display_round(round)
                 print("")
         else:

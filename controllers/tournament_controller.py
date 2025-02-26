@@ -35,7 +35,9 @@ class TournamentController:
         max_index = len(tournaments_list)
         selected_index = self.tournamentView.select_tournament_by_index(tournaments_list, max_index)
         if selected_index != None:
-            return tournaments_list[selected_index - 1]
+            tournament = tournaments_list[selected_index - 1]
+            tournament.convert_rounds()
+            return tournament
 
     def modify_tournament(self, tournament, attribute):  
         setattr(tournament, attribute, self.tournamentView.modify_tournament())
@@ -55,17 +57,23 @@ class TournamentController:
     
     def display_ladder(self, tournament, players_list):
         participants = tournament.get_participants(players_list)
-        ladder = tournament.name_ladder_ids(tournament.get_ladder(), participants)
-        self.tournamentView.display_ladder(ladder)
+        ladder = tournament.get_ladder()
+        named_ladder = []
+        for player_id, score in ladder:
+            for participant in participants:
+                if participant.id == player_id:
+                    name = participant.last_name + " " + participant.first_name
+                    named_ladder.append((name, score))
+        self.tournamentView.display_ladder(named_ladder)
 
     def play_match(self, tournament):
-        round = tournament.get_rounds()[tournament.current_round]
+        round = tournament.rounds[tournament.current_round]
         match = round.matchs_list[round.current_match]
         player1, player2 = match[0][0], match[1][0]
         return self.tournamentView.play_match(player1, player2)
 
     def display_round(self, round):
-        self.tournamentView.display_round(round)
+        self.tournamentView.display_unique_round(round)
 
     def end_tournament(self, tournament):
         self.tournamentView.tournament_end(tournament)

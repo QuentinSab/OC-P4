@@ -132,7 +132,7 @@ class MainController:
                     players_list = self.playerController.load_all_players()
                     self.tournamentController.display_ladder(tournament, players_list)
                 case "3":
-                    self.tournamentController.display_round(tournament.get_rounds()[tournament.current_round])
+                    self.tournamentController.display_round(tournament.rounds[tournament.current_round])
                 case "4":
                     if self.match_result_menu(tournament) == True:
                         break

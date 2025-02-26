@@ -134,7 +134,7 @@ class MainController:
                 case "3":
                     self.tournamentController.display_round(tournament.get_rounds()[tournament.current_round])
                 case "4":
-                    if self.tournamentController.play_match(tournament) == True:
+                    if self.match_result_menu(tournament) == True:
                         break
                 case "5":
                     tournament.delete()
@@ -159,3 +159,20 @@ class MainController:
                     break
                 case _:
                     self.mainView.display_error_menu()
+
+    def match_result_menu(self, tournament):
+        while True:
+            match self.tournamentController.play_match(tournament):
+                case "1":
+                    tournament.play_match([1, 0])
+                case "2":
+                    tournament.play_match([0, 1])
+                case "3":
+                    tournament.play_match([0.5, 0.5])
+                case "0":
+                    break
+                case _:
+                    self.mainView.display_error_menu()
+            if tournament.progress() == True:
+                self.tournamentController.end_tournament(tournament)
+                return True

@@ -166,13 +166,11 @@ class TournamentModel:
         self.rounds.append(round)
         self.update()
 
-    def play_match(self):
+    def play_match(self, result):
         round = self.get_rounds()[self.current_round]
         match = round.matchs_list[round.current_match]
-        score = random.choices([(0.0, 1.0), (1.0, 0.0), (0.5, 0.5)], weights=[0.4, 0.4, 0.2])
-        score1, score2 = score[0]   
-        updated_match = ([match[0][0], score1], [match[1][0], score2])
-        round.matchs_list[round.current_match] = updated_match
+        match[0][1], match[1][1] = result[0], result[1]
+        round.matchs_list[round.current_match] = match
         self.update()
 
     def progress(self):
@@ -215,3 +213,19 @@ class TournamentModel:
     def load_all_tournaments():
         json_tournaments = JsonModel(TOURNAMENTS_JSON)
         return json_tournaments.read_json(TournamentModel)
+    
+    @staticmethod
+    def add_tournament(name, place, description, round_number):
+        tournament = TournamentModel(
+            name=name,
+            status="starting",
+            place=place,
+            description=description,
+            start_date="start_date",
+            end_date="end_date",
+            round_number=round_number,
+            current_round=0,
+            rounds=[],
+            players=[]
+        )
+        tournament.save()

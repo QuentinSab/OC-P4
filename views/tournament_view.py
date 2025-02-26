@@ -29,7 +29,7 @@ class TournamentView:
             "Voir les informations du tournoi",
             "Voir le classement",
             "Voir le tour en cours",
-            "Jouer un match",
+            "Jouer les matchs",
             "Arrêter le tournoi",
             "Retour"
         )
@@ -76,16 +76,18 @@ class TournamentView:
         print(f"Date de début: {tournament.start_date}")
         print(f"Date de fin: {tournament.end_date}")
         print(f"Nombre de rounds: {tournament.round_number}")
-        print(f"Round actuel: {tournament.current_round}")
+        print(f"Round actuel: {tournament.current_round + 1}")
         print("")
-        print("Rounds")
-        if tournament.rounds:
-            for i, round_data in enumerate(tournament.rounds, 1):
-                print(f"Round {i}: {round_data}")
+        rounds = tournament.get_rounds()
+        if rounds:
+            for round in rounds:
+                self.display_round(round)
+                print("")
         else:
             print("Aucun round enregistré.")
-        print("")
+            print("")
         print("Participants")
+        print("")
         if tournament.players:
             for i, player in enumerate(tournament.players, 1):
                 print(f"Joueur {i}: {player}")
@@ -147,18 +149,34 @@ class TournamentView:
                 break
 
     def display_round(self, round):
-        Utils.clear()
         print(round.name)
         print("")
         for i, match in enumerate(round.matchs_list, start=1):
             player1, score1 = match[0]
             player2, score2 = match[1]
             print(f"  Match {i}: {player1} ({score1}) - {player2} ({score2})")
+
+    def display_unique_round(self, round):
+        Utils.clear()
+        self.display_round(round)
         Utils.temporisation()
+        
+    def play_match(self, player1, player2):
+        Utils.clear()
+        print(f" {player1} affronte {player2}")
+        print("")
+        print(f"1 : Victoire de {player1}")
+        print(f"2 : Victoire de {player2}")
+        print(f"3 : Égalité")
+        print(f"0 : Retour")
+        print("")
+        print("Choississez le résultat du match : ")
+        return input()
 
     def display_ladder(self, ladder):
         Utils.clear()
-        
+        print("Classement")
+        print("")
         print(f"{'Rang':<8} {'Joueur':<30} {'Score'}")
         print("")
         for rank, (player, score) in enumerate(ladder, 1):

@@ -16,20 +16,8 @@ class TournamentController:
         
     def add_tournament(self):
         name, place, description, round_number = self.tournamentView.get_tournament_data()
-        tournament = TournamentModel(
-            name=name,
-            status="starting",
-            place=place,
-            description=description,
-            start_date="start_date",
-            end_date="end_date",
-            round_number=round_number,
-            current_round=0,
-            rounds=[],
-            players=[]
-        )
-        tournament.save()
-
+        TournamentModel.add_tournament(name, place, description, round_number)
+            
     def add_participant(self, tournament, player_id):
         if player_id not in tournament.players:
             tournament.players.append(player_id)
@@ -71,10 +59,13 @@ class TournamentController:
         self.tournamentView.display_ladder(ladder)
 
     def play_match(self, tournament):
-        tournament.play_match()
-        if tournament.progress() == True:
-            self.tournamentView.tournament_end(tournament)
-            return True
+        round = tournament.get_rounds()[tournament.current_round]
+        match = round.matchs_list[round.current_match]
+        player1, player2 = match[0][0], match[1][0]
+        return self.tournamentView.play_match(player1, player2)
 
     def display_round(self, round):
         self.tournamentView.display_round(round)
+
+    def end_tournament(self, tournament):
+        self.tournamentView.tournament_end(tournament)

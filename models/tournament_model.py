@@ -6,8 +6,6 @@ from dataclasses import dataclass, asdict
 import uuid
 import random
 
-from views.utils import Utils
-
 TOURNAMENTS_JSON = "tournaments.json"
 
 @dataclass
@@ -74,11 +72,17 @@ class TournamentModel:
                 tournaments_list.append(self)
         self.json_tournaments.write_json(tournaments_list)
 
+    def converted_update(self):
+        participants = self.players
+        self.convert_players_to_ids()
+        self.update()
+        self.players = participants
+
     def launch(self):
         """Start the tournament"""
         self.status = "ongoing"
         self.start_date = datetime.now().isoformat()
-        self.update()
+        self.converted_update()
 
     def progress(self):
         "Advance tournament progress by one match"
@@ -95,13 +99,13 @@ class TournamentModel:
             else:
                 self.current_round += 1
                 self.start_round()
-        self.update()
+        self.converted_update()
 
     def end(self):
         """End the tournament"""
         self.status = "finished"
         self.end_date = datetime.now().isoformat()
-        self.update()
+        self.converted_update()
         return True
 
     def convert_rounds(self):
@@ -114,12 +118,19 @@ class TournamentModel:
                 rounds_list.append(round)
         self.rounds = rounds_list
 
-    def get_participants(self, players_list):
+    def convert_ids_to_players(self, players_list):
         participants = []
         for player in players_list:
             if player.id in self.players:
                 participants.append(player)
-        return participants
+        self.players = participants
+
+    def convert_players_to_ids(self):
+        if type(self.players[0]) != str:
+            ids = []
+            for player in self.players:
+                ids.append(player.id)
+            self.players = ids
 
     def get_opponents(self, player):
         """Return a list of last opponents that player has faced"""
@@ -145,7 +156,9 @@ class TournamentModel:
 
         # If first round
         if self.current_round == 0:
-            players_list = self.players
+            players_list = []
+            for player in self.players:
+                players_list.append(player.id)
             random.shuffle(players_list)
             
             # Adds all players to the list by pair
@@ -205,6 +218,25 @@ class TournamentModel:
         ranking.sort(key=lambda x: x[1], reverse=True)
         return ranking
 
+    def get_named_rounds(self):
+        rounds_list = []
+
+        for round in self.rounds:
+            matchs_list = []
+
+            for match in round.matchs_list:
+                player1_id, score1 = match[0]
+                player2_id, score2 = match[1]
+
+                player1 = next((p for p in self.players if p.id == player1_id), player1_id)
+                player2 = next((p for p in self.players if p.id == player2_id), player2_id)
+
+                matchs_list.append(((player1, score1), (player2, score2)))
+
+            rounds_list.append([round.name, matchs_list])
+
+        return rounds_list
+
     def start_round(self):
         """Create the next round"""
         round = RoundModel("Round " + str(self.current_round+1), datetime.now().isoformat(), "end_date", 0, [])
@@ -215,7 +247,7 @@ class TournamentModel:
             round.matchs_list.append(match)
             
         self.rounds.append(round)
-        self.update()
+        self.converted_update()
 
     def play_match(self, result):
         """Assign result to the current match"""
@@ -223,7 +255,7 @@ class TournamentModel:
         match = round.matchs_list[round.current_match]
         match[0][1], match[1][1] = result[0], result[1]
         round.matchs_list[round.current_match] = match
-        self.update()
+        self.converted_update()
 
     @staticmethod
     def load_all_tournaments():

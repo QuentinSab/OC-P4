@@ -28,6 +28,7 @@ class TournamentView:
             "Gestion de ",
             "Voir les informations du tournoi",
             "Voir le classement",
+            "Voir les participants",
             "Voir le tour en cours",
             "Jouer les matchs",
             "Arrêter le tournoi",
@@ -38,6 +39,8 @@ class TournamentView:
             "Gestion de ",
             "Voir les informations du tournoi",
             "Voir le classement",
+            "Voir les participants",
+            "Voir le tour en cours",
             "Effacer le tournoi",
             "Retour"
         )
@@ -77,21 +80,6 @@ class TournamentView:
         print(f"Date de fin: {tournament.end_date}")
         print(f"Nombre de rounds: {tournament.round_number}")
         print(f"Round actuel: {tournament.current_round + 1}")
-        print("")
-        if tournament.rounds:
-            for round in tournament.rounds:
-                self.display_round(round)
-                print("")
-        else:
-            print("Aucun round enregistré.")
-            print("")
-        print("Participants")
-        print("")
-        if tournament.players:
-            for i, player in enumerate(tournament.players, 1):
-                print(f"Joueur {i}: {player}")
-        else:
-            print("Aucun participant enregistré.")
         Utils.temporisation()
     
     def modify_tournament(self):
@@ -117,23 +105,23 @@ class TournamentView:
                 if 1 <= choice <= max_index:
                     return choice
 
-    def display_participant(self, participants):
+    def display_participant(self, tournament):
         Utils.clear()
-        if participants:
+        if tournament.players:
             print("Participants du Tournoi")
             print("")
-            for index, player in enumerate(participants, start = 1):
+            for index, player in enumerate(tournament.players, start = 1):
                 print(f"{index} : {player.last_name} {player.first_name}")
         else:
             print("Aucun participant inscrit.")
         Utils.temporisation()
 
-    def remove_participant(self, tournament, participants):
+    def remove_participant(self, tournament):
         Utils.clear()
-        if participants:
+        if tournament.players:
             print("Participants du Tournoi")
             print("")
-            for index, player in enumerate(participants, start = 1):
+            for index, player in enumerate(tournament.players, start = 1):
                 print(f"{index} : {player.last_name} {player.first_name}")
         else:
             print("Aucun participant inscrit.")
@@ -143,29 +131,26 @@ class TournamentView:
         while True:
             chosen_player = int(input("Entrez le numéro du participant à supprimer : ")) - 1
             if 0 <= chosen_player < len(tournament.players):
-                player_id_to_remove = participants[chosen_player].id 
-                tournament.players.remove(player_id_to_remove)
+                player_to_remove = tournament.players[chosen_player]
+                tournament.players.remove(player_to_remove)
                 break
 
-    def display_round(self, round):
-        print(round.name)
-        print("")
-        for i, match in enumerate(round.matchs_list, start=1):
-            player1, score1 = match[0]
-            player2, score2 = match[1]
-            print(f"  Match {i}: {player1} ({score1}) - {player2} ({score2})")
-
-    def display_unique_round(self, round):
+    def display_round(self, rounds):
         Utils.clear()
-        self.display_round(round)
+        for round in rounds:
+            print(round[0])
+            for i, match in enumerate(round[1], start=1):
+                (player1, score1), (player2, score2) = match
+                print(f"  Match {i}: {player1.last_name} {player1.first_name} ({score1}) - {player2.last_name} {player2.first_name} ({score2})")
+            print("")
         Utils.temporisation()
         
     def play_match(self, player1, player2):
         Utils.clear()
-        print(f" {player1} affronte {player2}")
+        print(f" {player1.last_name} {player1.first_name} affronte {player2.last_name} {player2.first_name}")
         print("")
-        print(f"1 : Victoire de {player1}")
-        print(f"2 : Victoire de {player2}")
+        print(f"1 : Victoire de {player1.last_name} {player1.first_name}")
+        print(f"2 : Victoire de {player2.last_name} {player2.first_name}")
         print(f"3 : Égalité")
         print(f"0 : Retour")
         print("")
@@ -178,8 +163,8 @@ class TournamentView:
         print("")
         print(f"{'Rang':<8} {'Joueur':<30} {'Score'}")
         print("")
-        for rank, (player, score) in enumerate(ladder, 1):
-            print(f"{rank:<8} {player:<30} {score}")
+        for i in range(0, len(ladder), 1):
+            print(f"{i+1:<8} {ladder[i][0].last_name:<15} {ladder[i][0].first_name:<15} {ladder[i][1]}")
         Utils.temporisation()
 
     def launch_tournament(self):

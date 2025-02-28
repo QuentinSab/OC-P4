@@ -80,7 +80,8 @@ class MainController:
 
     def manager_tournament_menus(self):
         """Determine which menu to use according to the selected tournament status."""
-        tournament = self.tournamentController.select_tournament()
+        players_list = self.playerController.load_all_players()
+        tournament = self.tournamentController.select_tournament(players_list)
         if tournament:
             match tournament.status:
                 case "starting":
@@ -104,14 +105,12 @@ class MainController:
                 case "4":
                     self.tournamentController.modify_tournament(tournament, "description")
                 case "5":
-                    players_list = self.playerController.load_all_players()
-                    self.tournamentController.display_participant(tournament, players_list)
+                    self.tournamentController.display_participant(tournament)
                 case "6":
                     player = self.playerController.select_player()
-                    self.tournamentController.add_participant(tournament, player.id)
+                    self.tournamentController.add_participant(tournament, player)
                 case "7":
-                    players_list = self.playerController.load_all_players()
-                    self.tournamentController.remove_participant(tournament, players_list)
+                    self.tournamentController.remove_participant(tournament)
                 case "8":
                     if self.tournamentController.launch_tournament(tournament):
                         break
@@ -129,14 +128,15 @@ class MainController:
                 case "1":
                     self.tournamentController.display_tournament_data(tournament)
                 case "2":
-                    players_list = self.playerController.load_all_players()
-                    self.tournamentController.display_ladder(tournament, players_list)
+                    self.tournamentController.display_ladder(tournament)
                 case "3":
-                    self.tournamentController.display_round(tournament.rounds[tournament.current_round])
+                    self.tournamentController.display_participant(tournament)
                 case "4":
+                    self.tournamentController.display_round(tournament)
+                case "5":
                     if self.match_result_menu(tournament) == True:
                         break
-                case "5":
+                case "6":
                     tournament.delete()
                     break
                 case "0":
@@ -150,9 +150,12 @@ class MainController:
                 case "1":
                     self.tournamentController.display_tournament_data(tournament)
                 case "2":
-                    players_list = self.playerController.load_all_players()
-                    self.tournamentController.display_ladder(tournament, players_list)
+                    self.tournamentController.display_ladder(tournament)
                 case "3":
+                    self.tournamentController.display_participant(tournament)
+                case "4":
+                    self.tournamentController.display_round(tournament)
+                case "5":
                     tournament.delete()
                     break
                 case "0":

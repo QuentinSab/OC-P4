@@ -1,8 +1,6 @@
 from models.tournament_model import TournamentModel
 from views.tournament_view import TournamentView
 
-from views.utils import Utils###
-
 class TournamentController:
     def __init__(self):
         self.tournamentView = TournamentView()
@@ -18,30 +16,31 @@ class TournamentController:
         name, place, description, round_number = self.tournamentView.get_tournament_data()
         TournamentModel.add_tournament(name, place, description, round_number)
             
-    def add_participant(self, tournament, player_id):
-        if player_id not in tournament.players:
-            tournament.players.append(player_id)
-            tournament.update()
+    def add_participant(self, tournament, player):
+        if player not in tournament.players:
+            tournament.players.append(player)
+            tournament.converted_update()
 
-    def display_participant(self, tournament, players_list):
-        self.tournamentView.display_participant(tournament.get_participants(players_list))
+    def display_participant(self, tournament):
+        self.tournamentView.display_participant(tournament)
 
-    def remove_participant(self, tournament, players_list):
-        self.tournamentView.remove_participant(tournament, tournament.get_participants(players_list))
-        tournament.update()
+    def remove_participant(self, tournament):
+        self.tournamentView.remove_participant(tournament)
+        tournament.converted_update()
 
-    def select_tournament(self):
+    def select_tournament(self, players_list):
         tournaments_list = TournamentModel.load_all_tournaments()
         max_index = len(tournaments_list)
         selected_index = self.tournamentView.select_tournament_by_index(tournaments_list, max_index)
         if selected_index != None:
             tournament = tournaments_list[selected_index - 1]
             tournament.convert_rounds()
+            tournament.convert_ids_to_players(players_list)
             return tournament
 
     def modify_tournament(self, tournament, attribute):  
         setattr(tournament, attribute, self.tournamentView.modify_tournament())
-        tournament.update()
+        tournament.converted_update()
     
     def launch_tournament(self, tournament):
         nombre_participants = len(tournament.players)
@@ -55,25 +54,31 @@ class TournamentController:
             tournament.start_round()
             return True
     
-    def display_ladder(self, tournament, players_list):
-        participants = tournament.get_participants(players_list)
+    def display_ladder(self, tournament):
         ladder = tournament.get_ladder()
-        named_ladder = []
-        for player_id, score in ladder:
-            for participant in participants:
-                if participant.id == player_id:
-                    name = participant.last_name + " " + participant.first_name
-                    named_ladder.append((name, score))
-        self.tournamentView.display_ladder(named_ladder)
+        player_ladder = []
+        for ranked_player in ladder:
+            for player in tournament.players:
+                if ranked_player[0] == player.id:
+                    ranked_player = (player, ranked_player[1])
+                    player_ladder.append(ranked_player)
+        self.tournamentView.display_ladder(player_ladder)
 
     def play_match(self, tournament):
         round = tournament.rounds[tournament.current_round]
         match = round.matchs_list[round.current_match]
         player1, player2 = match[0][0], match[1][0]
+        for player in tournament.players:
+            if player.id == player1:
+                player1 = player
+            if player.id == player2:
+                player2 = player
+
+                    
         return self.tournamentView.play_match(player1, player2)
 
-    def display_round(self, round):
-        self.tournamentView.display_unique_round(round)
+    def display_round(self, tournament):
+        self.tournamentView.display_round(tournament.get_named_rounds())
 
     def end_tournament(self, tournament):
         self.tournamentView.tournament_end(tournament)

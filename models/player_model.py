@@ -40,6 +40,13 @@ class PlayerModel:
                 players_list.append(self)
         self.json_players.write_json(players_list)
 
+    def check_registration(self, tournaments_list):
+        for tournament in tournaments_list:
+            if tournament.status != "finished":
+                for participant in tournament.players:
+                    if participant == self.id:
+                        return True
+
     @staticmethod
     def load_all_players():
         json_players = JsonModel(PLAYERS_JSON)

@@ -2,6 +2,7 @@ from controllers.player_controller import PlayerController
 from controllers.tournament_controller import TournamentController
 
 from views.main_view import MainView
+import views.menus
 
 class MainController:
     def __init__(self):
@@ -57,7 +58,8 @@ class MainController:
                 case "5":
                     player = self.playerController.select_player()
                 case "6":
-                    player.delete()
+                    tournaments_list = self.tournamentController.load_all_tournaments()
+                    self.playerController.delete_player(player, tournaments_list)
                     break
                 case "0":
                     break

@@ -4,7 +4,10 @@ from views.tournament_view import TournamentView
 class TournamentController:
     def __init__(self):
         self.tournamentView = TournamentView()
-        
+
+    def load_all_tournaments(self):
+        return TournamentModel.load_all_tournaments()
+
     def display_tournaments(self):
         tournaments_list = TournamentModel.load_all_tournaments()
         self.tournamentView.display_tournaments(tournaments_list)

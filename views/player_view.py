@@ -65,3 +65,9 @@ class PlayerView:
                 choice = int(input(f"Sélectionnez un joueur (1 à {max_index}) : "))
                 if 1 <= choice <= max_index:
                     return choice
+
+    def delete_registered_error(self, player):
+        Utils.clear()
+        print(f"{player.last_name} {player.first_name} joue dans un tournoi.")
+        print("La suppression est impossible.")
+        Utils.temporisation()

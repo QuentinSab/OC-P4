@@ -27,3 +27,8 @@ class PlayerController:
         setattr(player, attribute, self.playerView.modify_player())
         player.update()
 
+    def delete_player(self, player, tournaments_list):
+        if player.check_registration(tournaments_list) != True:
+            player.delete()
+        else:
+            self.playerView.delete_registered_error(player)

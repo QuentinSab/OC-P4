@@ -1,5 +1,6 @@
 from views.utils import Utils
 
+
 class PlayerView:
     def display_players(self, players_list):
         Utils.clear()
@@ -34,7 +35,7 @@ class PlayerView:
         if not players_list:
             print("Aucun joueur enregistré.")
             Utils.temporisation()
-        else:   
+        else:
             print("Liste des joueurs :")
             print("")
             for index, player in enumerate(players_list, start=1):

@@ -1,6 +1,7 @@
 from models.tournament_model import TournamentModel
 from views.tournament_view import TournamentView
 
+
 class TournamentController:
     def __init__(self):
         self.tournamentView = TournamentView()
@@ -11,14 +12,14 @@ class TournamentController:
     def display_tournaments(self):
         tournaments_list = TournamentModel.load_all_tournaments()
         self.tournamentView.display_tournaments(tournaments_list)
-    
+
     def display_tournament_data(self, tournament):
         self.tournamentView.display_tournament_data(tournament)
-        
+
     def add_tournament(self):
         name, place, description, round_number = self.tournamentView.get_tournament_data()
         TournamentModel.add_tournament(name, place, description, round_number)
-            
+
     def add_participant(self, tournament, player):
         if player not in tournament.players:
             tournament.players.append(player)
@@ -35,28 +36,28 @@ class TournamentController:
         tournaments_list = TournamentModel.load_all_tournaments()
         max_index = len(tournaments_list)
         selected_index = self.tournamentView.select_tournament_by_index(tournaments_list, max_index)
-        if selected_index != None:
+        if selected_index:
             tournament = tournaments_list[selected_index - 1]
             tournament.convert_rounds_to_objects()
             tournament.convert_ids_to_players(players_list)
             return tournament
 
-    def modify_tournament(self, tournament, attribute):  
+    def modify_tournament(self, tournament, attribute):
         setattr(tournament, attribute, self.tournamentView.modify_tournament())
         tournament.update()
-    
+
     def launch_tournament(self, tournament):
         nombre_participants = len(tournament.players)
         if nombre_participants == 0:
             self.tournamentView.no_participant_error()
-        elif nombre_participants %2:
+        elif nombre_participants % 2:
             self.tournamentView.parity_error()
         else:
-            tournament.launch()   
+            tournament.launch()
             self.tournamentView.launch_tournament()
             tournament.start_round()
             return True
-    
+
     def display_ladder(self, tournament):
         ladder = tournament.get_ladder()
         player_ladder = []

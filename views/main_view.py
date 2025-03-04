@@ -1,5 +1,6 @@
 from views.utils import Utils
 
+
 class MainView:
     def choice(self):
         print("")
@@ -15,12 +16,12 @@ class MainView:
     def display_menu(self, menu, **kwargs):
         target = kwargs.get("target")
         Utils.clear()
-        
+
         if target:
             print(f"--- {menu['title']}{target}---")
         else:
             print(f"--- {menu['title']} ---")
-            
+
         print("")
         for key, option in menu["options"].items():
             print(f"{key} : {option}")

@@ -6,9 +6,8 @@ from dataclasses import dataclass, asdict
 import uuid
 import random
 
-from views.utils import Utils
-
 TOURNAMENTS_JSON = "tournaments.json"
+
 
 @dataclass
 class TournamentModel:
@@ -36,7 +35,7 @@ class TournamentModel:
         round_number=4,
         current_round=0,
         rounds=[],
-        players=[]
+        players=[],
     ):
         self.json_tournaments = JsonModel(TOURNAMENTS_JSON)
         self.name = name
@@ -50,7 +49,7 @@ class TournamentModel:
         self.current_round = current_round
         self.rounds = rounds
         self.players = players
-        
+
     def save(self):
         """Add self to tournaments file"""
         tournaments_list = self.load_all_tournaments()
@@ -60,7 +59,7 @@ class TournamentModel:
     def delete(self):
         """Remove self from tournaments file"""
         tournaments_list = self.load_all_tournaments()
-        data_dicts = []  
+        data_dicts = []
         for tournament in tournaments_list:
             if tournament.id != self.id:
                 data_dicts.append(asdict(tournament))
@@ -69,32 +68,36 @@ class TournamentModel:
     def update(self):
         """Update self in tournaments file"""
         tournaments_list = self.load_all_tournaments()
-        data_dicts = []  
-        for tournament in tournaments_list:  
+        data_dicts = []
+        for tournament in tournaments_list:
             if tournament.id == self.id:
                 rounds = []
                 for round in self.rounds:
-                    rounds.append({
-                    "name": round.name,
-                    "start_date": round.start_date,
-                    "end_date": round.end_date,
-                    "current_match": round.current_match,
-                    "matchs_list": round.matchs_list
-                    })
-                
-                data_dicts.append({
-                "name": self.name,
-                "status": self.status,
-                "place": self.place,
-                "description": self.description,
-                "start_date": self.start_date,
-                "end_date": self.end_date,
-                "id": self.id,
-                "round_number": self.round_number,
-                "current_round": self.current_round,
-                "rounds": rounds,
-                "players": [player.id for player in self.players]
-                })
+                    rounds.append(
+                        {
+                            "name": round.name,
+                            "start_date": round.start_date,
+                            "end_date": round.end_date,
+                            "current_match": round.current_match,
+                            "matchs_list": round.matchs_list,
+                        }
+                    )
+
+                data_dicts.append(
+                    {
+                        "name": self.name,
+                        "status": self.status,
+                        "place": self.place,
+                        "description": self.description,
+                        "start_date": self.start_date,
+                        "end_date": self.end_date,
+                        "id": self.id,
+                        "round_number": self.round_number,
+                        "current_round": self.current_round,
+                        "rounds": rounds,
+                        "players": [player.id for player in self.players],
+                    }
+                )
             else:
                 data_dicts.append(asdict(tournament))
         self.json_tournaments.write_dict_json(data_dicts)
@@ -110,12 +113,12 @@ class TournamentModel:
         round = self.rounds[self.current_round]
         round.current_match += 1
         self.rounds[self.current_round] = round
-        
+
         # If all matches in the round have been played
-        if round.current_match == len(self.players)/2:
+        if round.current_match == len(self.players) / 2:
             round.end_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             # If current round was the last
-            if self.current_round == int(self.round_number)-1:
+            if self.current_round == int(self.round_number) - 1:
                 return self.end()
             else:
                 self.current_round += 1
@@ -174,21 +177,21 @@ class TournamentModel:
             for player in self.players:
                 players_list.append(player.id)
             random.shuffle(players_list)
-            
+
             # Adds all players to the list by pair
             for pair in range(0, len(players_list), 2):
                 pairs_list.append((players_list[pair], players_list[pair + 1]))
-                
+
         else:
             ladder = self.get_ladder()
             # List available players by descending score
             available_players = [player[0] for player in ladder]
-            
+
             while available_players:
                 player1 = available_players.pop(0)
-                opponents_faced = self.get_opponents(player1)  
+                opponents_faced = self.get_opponents(player1)
                 player2 = None
-                
+
                 # If an opponent has not been faced, he is added
                 for opponent in available_players:
                     if opponent not in opponents_faced:
@@ -213,17 +216,17 @@ class TournamentModel:
                 for player in match:
                     player_id, player_score = player
                     found = False
-                    
+
                     # Browse ranking
                     for i in range(len(ranking)):
                         ranked_player = ranking[i]
-                        
+
                         # If player is found, add up his score
                         if ranked_player[0] == player_id:
                             ranking[i] = (ranking[i][0], ranking[i][1] + player_score)
                             found = True
                             break
-                    
+
                     # If player is not in ranking, he is added
                     if not found:
                         ranking.append((player_id, player_score))
@@ -253,12 +256,18 @@ class TournamentModel:
 
     def start_round(self):
         """Create the next round"""
-        round = RoundModel("Tour " + str(self.current_round+1), datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "end_date", 0, [])
+        round = RoundModel(
+            "Tour " + str(self.current_round + 1),
+            datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            "end_date",
+            0,
+            [],
+        )
         # Create a match for each pair of players
         for pair in self.get_pairs():
             match = ([pair[0], 0], [pair[1], 0])
             round.matchs_list.append(match)
-            
+
         self.rounds.append(round)
         self.update()
 
@@ -275,7 +284,7 @@ class TournamentModel:
         """Return a list of all tournaments"""
         json_tournaments = JsonModel(TOURNAMENTS_JSON)
         return json_tournaments.read_json(TournamentModel)
-    
+
     @staticmethod
     def add_tournament(name, place, description, round_number):
         """Create a tournament in the tournament file"""
@@ -289,6 +298,6 @@ class TournamentModel:
             round_number=round_number,
             current_round=0,
             rounds=[],
-            players=[]
+            players=[],
         )
         tournament.save()

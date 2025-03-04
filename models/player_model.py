@@ -4,15 +4,23 @@ import uuid
 
 PLAYERS_JSON = "players.json"
 
+
 @dataclass
 class PlayerModel:
-    last_name:str
-    first_name:str
-    birth_date:str
-    national_id:str
-    id:str
+    last_name: str
+    first_name: str
+    birth_date: str
+    national_id: str
+    id: str
 
-    def __init__(self, last_name = "last_name", first_name =  "first_name", birth_date = "birth_date", national_id = "national_id", id=None):
+    def __init__(
+        self,
+        last_name="last_name",
+        first_name="first_name",
+        birth_date="birth_date",
+        national_id="national_id",
+        id=None,
+    ):
         self.json_players = JsonModel(PLAYERS_JSON)
         self.last_name = last_name
         self.first_name = first_name

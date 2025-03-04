@@ -1,6 +1,7 @@
 from models.player_model import PlayerModel
 from views.player_view import PlayerView
 
+
 class PlayerController:
     def __init__(self):
         self.playerView = PlayerView()
@@ -20,15 +21,15 @@ class PlayerController:
         players_list = self.load_all_players()
         max_index = len(players_list)
         selected_index = self.playerView.select_player_by_index(players_list, max_index)
-        if selected_index != None:
+        if selected_index:
             return players_list[selected_index - 1]
 
-    def modify_player(self, player, attribute):  
+    def modify_player(self, player, attribute):
         setattr(player, attribute, self.playerView.modify_player())
         player.update()
 
     def delete_player(self, player, tournaments_list):
-        if player.check_registration(tournaments_list) != True:
+        if not player.check_registration(tournaments_list):
             player.delete()
         else:
             self.playerView.delete_registered_error(player)

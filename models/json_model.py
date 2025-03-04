@@ -20,6 +20,10 @@ class JsonModel:
                 data_dicts.append(asdict(data))
             json.dump(data_dicts, file, indent=4)
 
+    def write_dict_json(self, data_dicts):
+        with open(self.file, "w") as file: 
+            json.dump(data_dicts, file, indent=4)
+
     def read_json(self, class_type):
         with open(self.file, "r") as file:
             data_list = json.load(file)

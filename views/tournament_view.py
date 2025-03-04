@@ -1,50 +1,6 @@
 from views.utils import Utils
 
 class TournamentView:
-    def __init__(self):
-        self.tournaments_menu = (
-            "Gestion des tournois",
-            "Lister les tournois",
-            "Créer un tournoi",
-            "Gérer un tournoi",
-            "Retour"
-        )
-
-        self.starting_tournament_menu = (
-            "Gestion de ",
-            "Voir les informations du tournoi",
-            "Changer le nom du tournoi",
-            "Changer le lieu du tournoi",
-            "Changer la description du tournoi",
-            "Lister les participants",
-            "Ajouter un participant",
-            "Retirer un participant",
-            "Démarrer le tournoi",
-            "Annuler le tournoi",
-            "Retour"
-        )
-
-        self.ongoing_tournament_menu = (
-            "Gestion de ",
-            "Voir les informations du tournoi",
-            "Voir le classement",
-            "Voir les participants",
-            "Voir le tour en cours",
-            "Jouer les matchs",
-            "Arrêter le tournoi",
-            "Retour"
-        )
-
-        self.finished_tournament_menu = (
-            "Gestion de ",
-            "Voir les informations du tournoi",
-            "Voir le classement",
-            "Voir les participants",
-            "Voir le tour en cours",
-            "Effacer le tournoi",
-            "Retour"
-        )
-
     def display_tournaments(self, tournaments_list):
         Utils.clear()
         if not tournaments_list:
@@ -52,9 +8,8 @@ class TournamentView:
         else:
             for tournament in tournaments_list:
                 print(
-                    f"ID : {tournament.id} | "
-                    f"Nom : {tournament.name} | "
-                    f"Statut : {tournament.status} | "
+                    f"Nom : {tournament.name:<30} | "
+                    f"Statut : {tournament.status:<12} | "
                     f"Lieu : {tournament.place}"
                 )
         Utils.temporisation()
@@ -81,8 +36,23 @@ class TournamentView:
         print(f"Nombre de rounds: {tournament.round_number}")
         print(f"Round actuel: {tournament.current_round + 1}")
         Utils.temporisation()
-    
+
+    def display_tournament_date(self, tournament):
+        Utils.clear()
+        print(f"Date de {tournament.name}")
+        print("")
+        if tournament.start_date:
+            print(f"Date de début: {tournament.start_date}")
+            if tournament.end_date:
+                print(f"Date de fin: {tournament.end_date}")
+            else:
+                print("Le tournoi n'est pas terminé.")
+        else:
+            print("Le tournoi n'a pas commencé.")
+        Utils.temporisation()
+            
     def modify_tournament(self):
+        Utils.clear()
         print("")
         new_value = input("Entrez la nouvelle valeur: ")
         print("")
@@ -108,7 +78,7 @@ class TournamentView:
     def display_participant(self, tournament):
         Utils.clear()
         if tournament.players:
-            print("Participants du Tournoi")
+            print(f"Participants de {tournament.name}")
             print("")
             for index, player in enumerate(tournament.players, start = 1):
                 print(f"{index} : {player.last_name} {player.first_name}")
@@ -119,7 +89,7 @@ class TournamentView:
     def remove_participant(self, tournament):
         Utils.clear()
         if tournament.players:
-            print("Participants du Tournoi")
+            print(f"Participants de {tournament.name}")
             print("")
             for index, player in enumerate(tournament.players, start = 1):
                 print(f"{index} : {player.last_name} {player.first_name}")

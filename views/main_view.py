@@ -1,15 +1,8 @@
 from views.utils import Utils
 
 class MainView:
-    def __init__(self):
-        self.main_menu = (
-            "Menu Principal",
-            "Gestion des joueurs",
-            "Gestion des tournois",
-            "Quitter"
-        )
-
     def choice(self):
+        print("")
         option = input("Choisissez une option : ")
         return option
 
@@ -19,15 +12,15 @@ class MainView:
         print("Sélectionnez une option en entrant son numéro.")
         Utils.temporisation()
 
-    def create_menu(self, menu_line, menu_target):
+    def display_menu(self, menu, **kwargs):
+        target = kwargs.get("target")
         Utils.clear()
-        # Display menu title
-        print(f"--- {menu_line[0]}{menu_target} ---")  
+        
+        if target:
+            print(f"--- {menu['title']}{target}---")
+        else:
+            print(f"--- {menu['title']} ---")
+            
         print("")
-        # Display menu options
-        line_number = 1
-        for option in menu_line[1:-1]:
-            print(f"{line_number} : {option}")
-            line_number += 1
-        print(f"0 : {menu_line[-1]}")
-        print("")
+        for key, option in menu["options"].items():
+            print(f"{key} : {option}")

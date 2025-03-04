@@ -22,14 +22,14 @@ class TournamentController:
     def add_participant(self, tournament, player):
         if player not in tournament.players:
             tournament.players.append(player)
-            tournament.converted_update()
+            tournament.update()
 
     def display_participant(self, tournament):
         self.tournamentView.display_participant(tournament)
 
     def remove_participant(self, tournament):
         self.tournamentView.remove_participant(tournament)
-        tournament.converted_update()
+        tournament.update()
 
     def select_tournament(self, players_list):
         tournaments_list = TournamentModel.load_all_tournaments()
@@ -37,13 +37,13 @@ class TournamentController:
         selected_index = self.tournamentView.select_tournament_by_index(tournaments_list, max_index)
         if selected_index != None:
             tournament = tournaments_list[selected_index - 1]
-            tournament.convert_rounds()
+            tournament.convert_rounds_to_objects()
             tournament.convert_ids_to_players(players_list)
             return tournament
 
     def modify_tournament(self, tournament, attribute):  
         setattr(tournament, attribute, self.tournamentView.modify_tournament())
-        tournament.converted_update()
+        tournament.update()
     
     def launch_tournament(self, tournament):
         nombre_participants = len(tournament.players)
@@ -52,7 +52,7 @@ class TournamentController:
         elif nombre_participants %2:
             self.tournamentView.parity_error()
         else:
-            tournament.launch()
+            tournament.launch()   
             self.tournamentView.launch_tournament()
             tournament.start_round()
             return True
@@ -67,6 +67,9 @@ class TournamentController:
                     player_ladder.append(ranked_player)
         self.tournamentView.display_ladder(player_ladder)
 
+    def display_tournament_date(self, tournament):
+        self.tournamentView.display_tournament_date(tournament)
+
     def play_match(self, tournament):
         round = tournament.rounds[tournament.current_round]
         match = round.matchs_list[round.current_match]
@@ -77,7 +80,6 @@ class TournamentController:
             if player.id == player2:
                 player2 = player
 
-                    
         return self.tournamentView.play_match(player1, player2)
 
     def display_round(self, tournament):

@@ -1,25 +1,6 @@
 from views.utils import Utils
 
 class PlayerView:
-    def __init__(self):
-        self.players_menu = (
-            "Gestion des joueurs",
-            "Lister les joueurs",
-            "Ajouter un joueur",
-            "Modifier un joueur",
-            "Retour"
-        )
-        self.modification_menu = (
-            "Modification de ",
-            "Changer le nom de famille",
-            "Changer le prénom",
-            "Changer la date de naissance",
-            "Changer l'identifiant national",
-            "Changer de joueur",
-            "Supprimer le joueur",
-            "Retour"
-        )
-
     def display_players(self, players_list):
         Utils.clear()
         if not players_list:
@@ -27,7 +8,6 @@ class PlayerView:
         else:
             for player in players_list:
                 print(
-                    f"ID : {player.id:<40} | "
                     f"Nom : {player.last_name:<15} | "
                     f"Prénom : {player.first_name:<15} | "
                     f"Date de naissance : {player.birth_date:<12} | "

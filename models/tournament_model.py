@@ -6,6 +6,8 @@ from dataclasses import dataclass, asdict
 import uuid
 import random
 
+from views.utils import Utils
+
 TOURNAMENTS_JSON = "tournaments.json"
 
 @dataclass
@@ -24,12 +26,12 @@ class TournamentModel:
 
     def __init__(
         self,
-        name="name",
-        status="status",
-        place="place",
-        description="description",
-        start_date="start_date",
-        end_date="end_date",
+        name=None,
+        status=None,
+        place=None,
+        description=None,
+        start_date=None,
+        end_date=None,
         id=None,
         round_number=4,
         current_round=0,
@@ -58,31 +60,50 @@ class TournamentModel:
     def delete(self):
         """Remove self from tournaments file"""
         tournaments_list = self.load_all_tournaments()
+        data_dicts = []  
         for tournament in tournaments_list:
-            if tournament.id == self.id:
-                tournaments_list.remove(tournament)
-        self.json_tournaments.write_json(tournaments_list)
+            if tournament.id != self.id:
+                data_dicts.append(asdict(tournament))
+        self.json_tournaments.write_dict_json(data_dicts)
 
     def update(self):
         """Update self in tournaments file"""
         tournaments_list = self.load_all_tournaments()
-        for tournament in tournaments_list:
+        data_dicts = []  
+        for tournament in tournaments_list:  
             if tournament.id == self.id:
-                tournaments_list.remove(tournament)
-                tournaments_list.append(self)
-        self.json_tournaments.write_json(tournaments_list)
-
-    def converted_update(self):
-        participants = self.players
-        self.convert_players_to_ids()
-        self.update()
-        self.players = participants
+                rounds = []
+                for round in self.rounds:
+                    rounds.append({
+                    "name": round.name,
+                    "start_date": round.start_date,
+                    "end_date": round.end_date,
+                    "current_match": round.current_match,
+                    "matchs_list": round.matchs_list
+                    })
+                
+                data_dicts.append({
+                "name": self.name,
+                "status": self.status,
+                "place": self.place,
+                "description": self.description,
+                "start_date": self.start_date,
+                "end_date": self.end_date,
+                "id": self.id,
+                "round_number": self.round_number,
+                "current_round": self.current_round,
+                "rounds": rounds,
+                "players": [player.id for player in self.players]
+                })
+            else:
+                data_dicts.append(asdict(tournament))
+        self.json_tournaments.write_dict_json(data_dicts)
 
     def launch(self):
         """Start the tournament"""
         self.status = "ongoing"
-        self.start_date = datetime.now().isoformat()
-        self.converted_update()
+        self.start_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        self.update()
 
     def progress(self):
         "Advance tournament progress by one match"
@@ -92,23 +113,23 @@ class TournamentModel:
         
         # If all matches in the round have been played
         if round.current_match == len(self.players)/2:
-            round.end_date = datetime.now().isoformat()
+            round.end_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             # If current round was the last
             if self.current_round == int(self.round_number)-1:
                 return self.end()
             else:
                 self.current_round += 1
                 self.start_round()
-        self.converted_update()
+        self.update()
 
     def end(self):
         """End the tournament"""
         self.status = "finished"
-        self.end_date = datetime.now().isoformat()
-        self.converted_update()
+        self.end_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        self.update()
         return True
 
-    def convert_rounds(self):
+    def convert_rounds_to_objects(self):
         """Convert tournament rounds into objects"""
         rounds_list = []
         for round in self.rounds:
@@ -124,13 +145,6 @@ class TournamentModel:
             if player.id in self.players:
                 participants.append(player)
         self.players = participants
-
-    def convert_players_to_ids(self):
-        if type(self.players[0]) != str:
-            ids = []
-            for player in self.players:
-                ids.append(player.id)
-            self.players = ids
 
     def get_opponents(self, player):
         """Return a list of last opponents that player has faced"""
@@ -239,15 +253,14 @@ class TournamentModel:
 
     def start_round(self):
         """Create the next round"""
-        round = RoundModel("Round " + str(self.current_round+1), datetime.now().isoformat(), "end_date", 0, [])
-        
+        round = RoundModel("Tour " + str(self.current_round+1), datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "end_date", 0, [])
         # Create a match for each pair of players
         for pair in self.get_pairs():
             match = ([pair[0], 0], [pair[1], 0])
             round.matchs_list.append(match)
             
         self.rounds.append(round)
-        self.converted_update()
+        self.update()
 
     def play_match(self, result):
         """Assign result to the current match"""
@@ -255,7 +268,7 @@ class TournamentModel:
         match = round.matchs_list[round.current_match]
         match[0][1], match[1][1] = result[0], result[1]
         round.matchs_list[round.current_match] = match
-        self.converted_update()
+        self.update()
 
     @staticmethod
     def load_all_tournaments():
@@ -271,8 +284,8 @@ class TournamentModel:
             status="starting",
             place=place,
             description=description,
-            start_date="start_date",
-            end_date="end_date",
+            start_date=None,
+            end_date=None,
             round_number=round_number,
             current_round=0,
             rounds=[],

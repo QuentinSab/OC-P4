@@ -18,7 +18,7 @@ class MainView:
         Utils.clear()
 
         if target:
-            print(f"--- {menu['title']}{target}---")
+            print(f"--- {menu['title']}{target} ---")
         else:
             print(f"--- {menu['title']} ---")
 

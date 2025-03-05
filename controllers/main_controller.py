@@ -199,15 +199,18 @@ class MainController:
                 case "3":
                     players_list = self.playerController.load_all_players()
                     tournament = self.tournamentController.select_tournament(players_list)
-                    self.tournamentController.display_tournament_date(tournament)
+                    if tournament:
+                        self.tournamentController.display_tournament_date(tournament)
                 case "4":
                     players_list = self.playerController.load_all_players()
                     tournament = self.tournamentController.select_tournament(players_list)
-                    self.tournamentController.display_participant(tournament)
+                    if tournament:
+                        self.tournamentController.display_participant(tournament)
                 case "5":
                     players_list = self.playerController.load_all_players()
                     tournament = self.tournamentController.select_tournament(players_list)
-                    self.tournamentController.display_round(tournament)
+                    if tournament:
+                        self.tournamentController.display_round(tournament)
                 case "0":
                     break
                 case _:

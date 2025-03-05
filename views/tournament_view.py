@@ -20,7 +20,15 @@ class TournamentView:
         name = input("Entrez le nom du tournoi: ")
         place = input("Entrez le lieu: ")
         description = input("Entrez la description: ")
-        round_number = input("Entrez le nombre de tours: ")
+        while True:
+            round_number = input("Entrez le nombre de tours: ")
+            if round_number.isdigit() and round_number != "0":
+                round_number = int(round_number)
+                break
+            else:
+                Utils.clear()
+                print("Entrez un nombre valide.")
+                print("")
         return name, place, description, round_number
 
     def display_tournament_data(self, tournament):

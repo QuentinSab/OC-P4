@@ -51,13 +51,13 @@ class TournamentModel:
         self.players = players
 
     def save(self):
-        """Add self to tournaments file"""
+        """Add the current tournament to tournaments file"""
         tournaments_list = self.load_all_tournaments()
         tournaments_list.append(self)
         self.json_tournaments.write_json(tournaments_list)
 
     def delete(self):
-        """Remove self from tournaments file"""
+        """Remove the current tournament from tournaments file"""
         tournaments_list = self.load_all_tournaments()
         data_dicts = []
         for tournament in tournaments_list:
@@ -66,12 +66,15 @@ class TournamentModel:
         self.json_tournaments.write_dict_json(data_dicts)
 
     def update(self):
-        """Update self in tournaments file"""
+        """Update the current tournament in tournaments file"""
         tournaments_list = self.load_all_tournaments()
         data_dicts = []
+
         for tournament in tournaments_list:
             if tournament.id == self.id:
                 rounds = []
+
+                # Prepare round data for JSON serialization
                 for round in self.rounds:
                     rounds.append(
                         {
@@ -82,7 +85,7 @@ class TournamentModel:
                             "matchs_list": round.matchs_list,
                         }
                     )
-
+                # Prepare tournament data for JSON serialization
                 data_dicts.append(
                     {
                         "name": self.name,
@@ -99,7 +102,9 @@ class TournamentModel:
                     }
                 )
             else:
+                # Keep other tournaments unchanged
                 data_dicts.append(asdict(tournament))
+
         self.json_tournaments.write_dict_json(data_dicts)
 
     def launch(self):
@@ -114,10 +119,11 @@ class TournamentModel:
         round.current_match += 1
         self.rounds[self.current_round] = round
 
-        # If all matches in the round have been played
+        # Check if all matches in the round have been played
         if round.current_match == len(self.players) / 2:
             round.end_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-            # If current round was the last
+
+            # End the tournament if it's the last round
             if self.current_round == int(self.round_number) - 1:
                 return self.end()
             else:
@@ -135,18 +141,23 @@ class TournamentModel:
     def convert_rounds_to_objects(self):
         """Convert tournament rounds into objects"""
         rounds_list = []
+
         for round in self.rounds:
             if isinstance(round, dict):
                 rounds_list.append(RoundModel(**round))
             else:
                 rounds_list.append(round)
+
         self.rounds = rounds_list
 
     def convert_ids_to_players(self, players_list):
+        """Replace players ids with corresponding player objects if they exist in the list"""
         participants = []
+
         for player in players_list:
             if player.id in self.players:
                 participants.append(player)
+
         self.players = participants
 
     def get_opponents(self, player):
@@ -156,22 +167,25 @@ class TournamentModel:
 
         for round in self.rounds:
             for match in round.matchs_list:
+
                 # If player is found in the match, the opponent is added.
                 if match[0][0] == player:
                     opponents.append(match[1][0])
                 elif match[1][0] == player:
                     opponents.append(match[0][0])
 
-                # If all the opponents have faced player
+                # Clear the list if all possible opponents have been faced
                 if len(set(opponents)) == players_count - 1:
                     opponents.clear()
                     return opponents
+
         return opponents
 
     def get_pairs(self):
+        """Return a list of matched tournament participants"""
         pairs_list = []
 
-        # If first round
+        # Create random pairs for the first round
         if self.current_round == 0:
             players_list = []
             for player in self.players:
@@ -187,12 +201,13 @@ class TournamentModel:
             # List available players by descending score
             available_players = [player[0] for player in ladder]
 
+            # Create pairs based on opponents faced
             while available_players:
                 player1 = available_players.pop(0)
                 opponents_faced = self.get_opponents(player1)
                 player2 = None
 
-                # If an opponent has not been faced, he is added
+                # If opponents have not been played, the closest in ranking is added.
                 for opponent in available_players:
                     if opponent not in opponents_faced:
                         player2 = opponent
@@ -204,20 +219,21 @@ class TournamentModel:
 
                 available_players.remove(player2)
                 pairs_list.append((player1, player2))
+
         return pairs_list
 
     def get_ladder(self):
         """Return the tournament ranking"""
         ranking = []
 
-        # For each player in each match in each round
+        # Aggregate scores for each player based on match results
         for round in self.rounds:
             for match in round.matchs_list:
                 for player in match:
                     player_id, player_score = player
                     found = False
 
-                    # Browse ranking
+                    # For each player, update his score if he is already in the ranking
                     for i in range(len(ranking)):
                         ranked_player = ranking[i]
 
@@ -236,6 +252,7 @@ class TournamentModel:
         return ranking
 
     def get_named_rounds(self):
+        """Return the list of rounds with players objects instead of ids"""
         rounds_list = []
 
         for round in self.rounds:
@@ -245,8 +262,13 @@ class TournamentModel:
                 player1_id, score1 = match[0]
                 player2_id, score2 = match[1]
 
-                player1 = next((p for p in self.players if p.id == player1_id), player1_id)
-                player2 = next((p for p in self.players if p.id == player2_id), player2_id)
+                # Find players objects based on ids
+                player1, player2 = None, None
+                for player in self.players:
+                    if player.id == player1_id:
+                        player1 = player
+                    elif player.id == player2_id:
+                        player2 = player
 
                 matchs_list.append(((player1, score1), (player2, score2)))
 
@@ -263,6 +285,7 @@ class TournamentModel:
             0,
             [],
         )
+
         # Create a match for each pair of players
         for pair in self.get_pairs():
             match = ([pair[0], 0], [pair[1], 0])
@@ -273,9 +296,12 @@ class TournamentModel:
 
     def play_match(self, result):
         """Assign result to the current match"""
+        # Retrieve the current match
         round = self.rounds[self.current_round]
         match = round.matchs_list[round.current_match]
+
         match[0][1], match[1][1] = result[0], result[1]
+
         round.matchs_list[round.current_match] = match
         self.update()
 

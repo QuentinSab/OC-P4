@@ -42,11 +42,13 @@ class MainController:
                     self.mainView.display_error_menu()
 
     def player_modification_menu(self):
+        # Retrieve the player to be modified
         player = self.playerController.select_player()
         if not player:
             return None
         while True:
             target = player.last_name + " " + player.first_name
+
             self.mainView.display_menu(menus["player_modification"], target=target)
             match self.mainView.choice():
                 case "1":
@@ -77,26 +79,25 @@ class MainController:
                 case "2":
                     self.tournamentController.add_tournament()
                 case "3":
-                    self.manager_tournament_menus()
+                    self.manage_tournament_menus()
                 case "0":
                     break
                 case _:
                     self.mainView.display_error_menu()
 
-    def manager_tournament_menus(self):
+    def manage_tournament_menus(self):
         """Determine which menu to use according to the selected tournament status."""
         players_list = self.playerController.load_all_players()
+        # Retrieve the tournament to be manage
         tournament = self.tournamentController.select_tournament(players_list)
-        if tournament:
-            match tournament.status:
-                case "starting":
-                    self.starting_tournament_menu(tournament)
-                case "ongoing":
-                    self.ongoing_tournament_menu(tournament)
-                case "finished":
-                    self.finished_tournament_menu(tournament)
-                case _:
-                    pass
+
+        match tournament.status:
+            case "starting":
+                self.starting_tournament_menu(tournament)
+            case "ongoing":
+                self.ongoing_tournament_menu(tournament)
+            case "finished":
+                self.finished_tournament_menu(tournament)
 
     def starting_tournament_menu(self, tournament):
         while True:
@@ -120,6 +121,7 @@ class MainController:
                 case "8":
                     if self.tournamentController.launch_tournament(tournament):
                         break
+
                 case "9":
                     tournament.delete()
                     break
@@ -173,26 +175,31 @@ class MainController:
 
     def match_result_menu(self, tournament):
         while True:
+            match_played = False
+
             match self.tournamentController.play_match(tournament):
+                # Win for player 1
                 case "1":
                     tournament.play_match([1, 0])
-                    if tournament.progress():
-                        self.tournamentController.end_tournament(tournament)
-                        return True
+                    match_played = True
+                # Win for player 2
                 case "2":
                     tournament.play_match([0, 1])
-                    if tournament.progress():
-                        self.tournamentController.end_tournament(tournament)
-                        return True
+                    match_played = True
+                # Draw match
                 case "3":
                     tournament.play_match([0.5, 0.5])
-                    if tournament.progress():
-                        self.tournamentController.end_tournament(tournament)
-                        return True
+                    match_played = True
                 case "0":
                     break
                 case _:
                     self.mainView.display_error_menu()
+
+            if match_played:
+                # If the last match of the tournament is played
+                if tournament.progress():
+                    self.tournamentController.end_tournament(tournament)
+                    return True
 
     def report_menu(self):
         while True:
@@ -207,16 +214,19 @@ class MainController:
                     tournament = self.tournamentController.select_tournament(players_list)
                     if tournament:
                         self.tournamentController.display_tournament_date(tournament)
+
                 case "4":
                     players_list = self.playerController.load_all_players()
                     tournament = self.tournamentController.select_tournament(players_list)
                     if tournament:
                         self.tournamentController.display_participant(tournament)
+
                 case "5":
                     players_list = self.playerController.load_all_players()
                     tournament = self.tournamentController.select_tournament(players_list)
                     if tournament:
                         self.tournamentController.display_round(tournament)
+
                 case "0":
                     break
                 case _:

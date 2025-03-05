@@ -5,6 +5,7 @@ class Utils:
 
     @staticmethod
     def clear():
+        """Clear the console based on the operating system"""
         if os.name == "nt":
             os.system("cls")
         else:
@@ -12,5 +13,6 @@ class Utils:
 
     @staticmethod
     def temporisation():
+        """Pause execution until the user make an input"""
         print("")
         input("Entrée pour revenir au menu...")

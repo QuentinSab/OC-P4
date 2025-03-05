@@ -21,8 +21,7 @@ class PlayerController:
         players_list = self.load_all_players()
         max_index = len(players_list)
         selected_index = self.playerView.select_player_by_index(players_list, max_index)
-        if selected_index:
-            return players_list[selected_index - 1]
+        return players_list[selected_index - 1]
 
     def modify_player(self, player, attribute):
         setattr(player, attribute, self.playerView.modify_player())

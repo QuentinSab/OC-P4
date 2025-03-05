@@ -176,17 +176,23 @@ class MainController:
             match self.tournamentController.play_match(tournament):
                 case "1":
                     tournament.play_match([1, 0])
+                    if tournament.progress():
+                        self.tournamentController.end_tournament(tournament)
+                        return True
                 case "2":
                     tournament.play_match([0, 1])
+                    if tournament.progress():
+                        self.tournamentController.end_tournament(tournament)
+                        return True
                 case "3":
                     tournament.play_match([0.5, 0.5])
+                    if tournament.progress():
+                        self.tournamentController.end_tournament(tournament)
+                        return True
                 case "0":
                     break
                 case _:
                     self.mainView.display_error_menu()
-            if tournament.progress():
-                self.tournamentController.end_tournament(tournament)
-                return True
 
     def report_menu(self):
         while True:

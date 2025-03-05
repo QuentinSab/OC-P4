@@ -43,9 +43,11 @@ class PlayerView:
             print("")
 
             while True:
-                choice = int(input(f"Sélectionnez un joueur (1 à {max_index}) : "))
-                if 1 <= choice <= max_index:
-                    return choice
+                choice = input(f"Sélectionnez un joueur (1 à {max_index}) : ")
+                if choice.isdigit():
+                    choice = int(choice)
+                    if 1 <= choice <= max_index:
+                        return choice
 
     def delete_registered_error(self, player):
         Utils.clear()

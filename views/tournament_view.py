@@ -80,9 +80,11 @@ class TournamentView:
             print("")
 
             while True:
-                choice = int(input(f"Sélectionnez un tournoi (1 à {max_index}) : "))
-                if 1 <= choice <= max_index:
-                    return choice
+                choice = input(f"Sélectionnez un tournoi (1 à {max_index}) : ")
+                if choice.isdigit():
+                    choice = int(choice)
+                    if 1 <= choice <= max_index:
+                        return choice
 
     def display_participant(self, tournament):
         Utils.clear()
@@ -108,11 +110,13 @@ class TournamentView:
             return None
         print("")
         while True:
-            chosen_player = int(input("Entrez le numéro du participant à supprimer : ")) - 1
-            if 0 <= chosen_player < len(tournament.players):
-                player_to_remove = tournament.players[chosen_player]
-                tournament.players.remove(player_to_remove)
-                break
+            chosen_player = input("Entrez le numéro du participant à supprimer : ")
+            if chosen_player.isdigit():
+                chosen_player = int(chosen_player) - 1
+                if 0 <= chosen_player < len(tournament.players):
+                    player_to_remove = tournament.players[chosen_player]
+                    tournament.players.remove(player_to_remove)
+                    break
 
     def display_round(self, rounds):
         Utils.clear()

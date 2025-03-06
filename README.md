@@ -55,16 +55,16 @@ Run main.py to start the program:
 
 The program is navigated using the keyboard and is divided into three main sections:
 
-    Players Section:
-    In this section, you can add, delete, or modify players in the database.
+Players Section:
+In this section, you can add, delete, or modify players in the database.
 
-    Tournament Section:
-    This part allows you to create, delete, and manage multiple tournaments simultaneously.
-    Each tournament can have one of three statuses: "starting", "ongoing", or "finished", with each status providing access to different options.
-    You can manage tournament information, participants, and progress based on the current status.
+Tournament Section:
+This part allows you to create, delete, and manage multiple tournaments simultaneously.
+Each tournament can have one of three statuses: "starting", "ongoing", or "finished", with each status providing access to different options.
+You can manage tournament information, participants, and progress based on the current status.
 
-    Reports Section:
-    Here, you can view most of the information stored in the databases.
+Reports Section:
+Here, you can view most of the information stored in the databases.
 
 ### 3. Generating a flake8 html report
 

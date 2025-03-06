@@ -28,8 +28,9 @@ class PlayerController:
         # Display the list of numbered players and retrieve the number of the chosen player
         selected_index = self.playerView.select_player_by_index(players_list, max_index)
 
-        # Returns the player corresponding to the number chosen
-        return players_list[selected_index - 1]
+        if selected_index:
+            # Returns the player corresponding to the number chosen
+            return players_list[selected_index - 1]
 
     def modify_player(self, player, attribute):
         """Modify player information according to the given attribute"""

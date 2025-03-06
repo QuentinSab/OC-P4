@@ -91,13 +91,14 @@ class MainController:
         # Retrieve the tournament to be manage
         tournament = self.tournamentController.select_tournament(players_list)
 
-        match tournament.status:
-            case "starting":
-                self.starting_tournament_menu(tournament)
-            case "ongoing":
-                self.ongoing_tournament_menu(tournament)
-            case "finished":
-                self.finished_tournament_menu(tournament)
+        if tournament:
+            match tournament.status:
+                case "starting":
+                    self.starting_tournament_menu(tournament)
+                case "ongoing":
+                    self.ongoing_tournament_menu(tournament)
+                case "finished":
+                    self.finished_tournament_menu(tournament)
 
     def starting_tournament_menu(self, tournament):
         while True:
@@ -115,7 +116,8 @@ class MainController:
                     self.tournamentController.display_participant(tournament)
                 case "6":
                     player = self.playerController.select_player()
-                    self.tournamentController.add_participant(tournament, player)
+                    if player:
+                        self.tournamentController.add_participant(tournament, player)
                 case "7":
                     self.tournamentController.remove_participant(tournament)
                 case "8":
